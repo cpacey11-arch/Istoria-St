@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Φλάσκαρτς – Ο Ιμπραήμ & ο Παπαφλέσσας</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9933a;
+    --gold-light: #e8b96a;
+    --dark: #1a120a;
+    --parchment: #f5ead8;
+    --smoke: #2e1f10;
+    --ink: #3b2510;
+    --red: #8b1a1a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--dark);
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(201,147,58,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(139,26,26,0.07) 0%, transparent 60%);
+    font-family: 'EB Garamond', serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 80px;
+    color: var(--parchment);
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .chapter-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    opacity: 0.85;
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    font-weight: 900;
+    color: var(--parchment);
+    line-height: 1.25;
+    text-shadow: 0 2px 20px rgba(201,147,58,0.3);
+  }
+
+  h1 span { color: var(--gold); }
+
+  .subtitle {
+    margin-top: 10px;
+    font-size: 1rem;
+    font-style: italic;
+    color: rgba(245,234,216,0.6);
+  }
+
+  .divider {
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 16px auto 0;
+  }
+
+  /* Progress */
+  .progress-bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 32px;
+    animation: fadeIn 1s ease 0.3s both;
+  }
+
+  .progress-track {
+    width: 200px;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--red), var(--gold));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-text {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+
+  /* Card container */
+  .card-area {
+    perspective: 1200px;
+    width: 100%;
+    max-width: 640px;
+    margin-bottom: 36px;
+    animation: fadeIn 0.6s ease 0.5s both;
+  }
+
+  .card {
+    position: relative;
+    width: 100%;
+    min-height: 280px;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
+  }
+
+  .card.flipped { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute;
+    inset: 0;
+    min-height: 280px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 36px;
+    text-align: center;
+  }
+
+  .card-front {
+    background: linear-gradient(145deg, var(--smoke) 0%, #1e1008 100%);
+    border: 1px solid rgba(201,147,58,0.3);
+    box-shadow:
+      0 20px 60px rgba(0,0,0,0.6),
+      inset 0 1px 0 rgba(201,147,58,0.15),
+      0 0 0 1px rgba(201,147,58,0.08);
+  }
+
+  .card-back {
+    background: linear-gradient(145deg, #2d1a06 0%, #1a0e02 100%);
+    border: 1px solid rgba(201,147,58,0.4);
+    box-shadow:
+      0 20px 60px rgba(0,0,0,0.6),
+      inset 0 1px 0 rgba(201,147,58,0.2);
+    transform: rotateY(180deg);
+  }
+
+  .card-tag {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    opacity: 0.7;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    border: 1px solid rgba(201,147,58,0.25);
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  .card-front .card-tag { color: rgba(245,234,216,0.5); border-color: rgba(245,234,216,0.15); }
+
+  .card-question {
+    font-size: clamp(1.1rem, 3vw, 1.4rem);
+    line-height: 1.5;
+    color: var(--parchment);
+    font-weight: 600;
+  }
+
+  .card-answer {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    line-height: 1.65;
+    color: var(--parchment);
+  }
+
+  .card-answer strong {
+    color: var(--gold-light);
+    font-style: normal;
+  }
+
+  .flip-hint {
+    margin-top: 24px;
+    font-size: 0.75rem;
+    font-style: italic;
+    color: rgba(245,234,216,0.3);
+    letter-spacing: 0.05em;
+  }
+
+  .card-front .flip-hint { display: block; }
+  .card-back .flip-hint { display: none; }
+
+  /* Corner ornament */
+  .corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    opacity: 0.3;
+  }
+  .corner::before, .corner::after {
+    content: '';
+    position: absolute;
+    background: var(--gold);
+  }
+  .corner::before { width: 2px; height: 100%; }
+  .corner::after { width: 100%; height: 2px; }
+  .corner.tl { top: 12px; left: 12px; }
+  .corner.tr { top: 12px; right: 12px; transform: scaleX(-1); }
+  .corner.bl { bottom: 12px; left: 12px; transform: scaleY(-1); }
+  .corner.br { bottom: 12px; right: 12px; transform: scale(-1); }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeIn 0.8s ease 0.7s both;
+  }
+
+  button {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 12px 24px;
+    transition: all 0.2s ease;
+  }
+
+  .btn-nav {
+    background: rgba(201,147,58,0.12);
+    color: var(--gold-light);
+    border: 1px solid rgba(201,147,58,0.3);
+  }
+
+  .btn-nav:hover:not(:disabled) {
+    background: rgba(201,147,58,0.22);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(201,147,58,0.15);
+  }
+
+  .btn-nav:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .btn-flip {
+    background: linear-gradient(135deg, var(--red), #6b1212);
+    color: var(--parchment);
+    box-shadow: 0 4px 20px rgba(139,26,26,0.35);
+  }
+
+  .btn-flip:hover {
+    background: linear-gradient(135deg, #a02020, var(--red));
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(139,26,26,0.45);
+  }
+
+  .btn-shuffle {
+    background: rgba(255,255,255,0.04);
+    color: rgba(245,234,216,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .btn-shuffle:hover {
+    background: rgba(255,255,255,0.08);
+    color: var(--parchment);
+  }
+
+  /* Footer */
+  .footer {
+    position: fixed;
+    top: 14px;
+    right: 18px;
+    font-size: 0.65rem;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.08em;
+    color: rgba(201,147,58,0.45);
+    z-index: 100;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Card swap animation */
+  .card-area.switching .card {
+    animation: cardSwap 0.3s ease;
+  }
+  @keyframes cardSwap {
+    0% { opacity: 1; transform: translateX(0); }
+    50% { opacity: 0; transform: translateX(-30px); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="footer">© myspiderwebsite | Christina Papadimitriou</div>
+
+<header>
+  <div class="chapter-label">Κεφάλαιο 11 · Ιστορία ΣΤ΄ Δημοτικού</div>
+  <h1>Ο <span>Ιμπραήμ</span> στην Πελοπόννησο<br>& η θυσία του <span>Παπαφλέσσα</span></h1>
+  <p class="subtitle">Καρτέλες Εξάσκησης</p>
+  <div class="divider"></div>
+</header>
+
+<div class="progress-bar">
+  <div class="progress-track">
+    <div class="progress-fill" id="progFill" style="width:8.33%"></div>
+  </div>
+  <span class="progress-text" id="progText">1 / 12</span>
+</div>
+
+<div class="card-area" id="cardArea">
+  <div class="card" id="card" onclick="flipCard()">
+    <div class="card-face card-front">
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
+      <div class="card-tag">Ερώτηση</div>
+      <div class="card-question" id="cardQ"></div>
+      <div class="flip-hint">Κάνε κλικ για να δεις την απάντηση</div>
+    </div>
+    <div class="card-face card-back">
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
+      <div class="card-tag">Απάντηση</div>
+      <div class="card-answer" id="cardA"></div>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn-nav" id="btnPrev" onclick="prevCard()">◀ Προηγούμενη</button>
+  <button class="btn-flip" onclick="flipCard()">↻ Αναστροφή</button>
+  <button class="btn-nav" id="btnNext" onclick="nextCard()">Επόμενη ▶</button>
+</div>
+<div style="margin-top:14px; text-align:center;">
+  <button class="btn-shuffle" onclick="shuffle()">⇄ Ανακάτεμα καρτελών</button>
+</div>
+
+<script>
+const cards = [
+  {
+    q: "Ποια ήταν η πολιτική κατάσταση στην Ελλάδα το 1824;",
+    a: "Η Επανάσταση ήταν σε κρίσιμη φάση: υπήρχαν <strong>σοβαρές εσωτερικές διαμάχες</strong> και γνωστοί οπλαρχηγοί, όπως ο Κολοκοτρώνης, ήταν <strong>φυλακισμένοι</strong>."
+  },
+  {
+    q: "Ποιος ήταν ο Ιμπραήμ Πασάς και από πού κατήγετο;",
+    a: "Ήταν γιος του <strong>Μεχμέτ Αλή</strong>, ηγεμόνα της Αιγύπτου. Έμπειρος στρατηγός με <strong>εκπαιδευμένο κατά ευρωπαϊκά πρότυπα στρατό</strong>."
+  },
+  {
+    q: "Πότε και πού αποβιβάστηκε ο Ιμπραήμ στην Πελοπόννησο;",
+    a: "Τον <strong>Φεβρουάριο του 1825</strong> αποβιβάστηκε στη <strong>Μεθώνη</strong> της νοτιοδυτικής Πελοποννήσου με πολυάριθμο στρατό και σύγχρονα εφόδια."
+  },
+  {
+    q: "Ποιο φρούριο κατέλαβε πρώτα ο Ιμπραήμ και πού βρισκόταν;",
+    a: "Κατέλαβε το <strong>κάστρο του Νεόκαστρου</strong> στην <strong>Πύλο</strong> της Μεσσηνίας."
+  },
+  {
+    q: "Ποιος ήταν ο Παπαφλέσσας και ποια ιδιότητα συνδύαζε;",
+    a: "Ήταν ο <strong>Γρηγόριος Δικαίος</strong>, που συνδύαζε τις ιδιότητες του <strong>κληρικού, πολιτικού και πολεμιστή</strong>. Υπηρετούσε ως <strong>υπουργός Εσωτερικών</strong>."
+  },
+  {
+    q: "Τι ζήτησε ο Παπαφλέσσας από την κυβέρνηση για να αντιμετωπιστεί ο Ιμπραήμ;",
+    a: "Ζήτησε την <strong>αποφυλάκιση των φυλακισμένων οπλαρχηγών</strong> ώστε να πολεμήσουν όλοι μαζί εναντίον του εχθρού."
+  },
+  {
+    q: "Πόσους πολεμιστές συγκέντρωσε ο Παπαφλέσσας στο Μανιάκι και πού οχυρώθηκε;",
+    a: "Συγκέντρωσε <strong>1.500–2.000 πολεμιστές</strong> και οχυρώθηκε σε τρία <strong>«ταμπούρια»</strong> (προχώματα) στο ορεινό χωριό <strong>Μανιάκι</strong> Μεσσηνίας."
+  },
+  {
+    q: "Πότε έγινε η μάχη στο Μανιάκι και πόσο κράτησε;",
+    a: "Η μάχη έγινε στις <strong>20 Μαΐου 1825</strong> και κράτησε <strong>οκτώ ολόκληρες ώρες</strong>. Αντίπαλοι ήταν μόλις 300–600 Έλληνες εναντίον χιλιάδων Αιγυπτίων."
+  },
+  {
+    q: "Πώς αντέδρασε ο Ιμπραήμ όταν βρήκε το σώμα του Παπαφλέσσα μετά τη μάχη;",
+    a: "Εξέφρασε <strong>θαυμασμό</strong> για τον εχθρό του: τον αποκάλεσε <strong>γενναίο πολεμιστή</strong> και τον <strong>φίλησε</strong> — χειρονομία που έμεινε στην ιστορία."
+  },
+  {
+    q: "Ποια ήταν η στρατηγική του Κολοκοτρώνη απέναντι στον Ιμπραήμ;",
+    a: "Χρησιμοποίησε τον <strong>κλεφτοπόλεμο</strong>: αιφνιδιαστικές επιθέσεις, νυχτερινές επιδρομές και <strong>αποφυγή ανοιχτής σύγκρουσης</strong>."
+  },
+  {
+    q: "Ποιος ήταν ο Κάρολος Φαβιέρος και ποιος τον ανέθεσε αποστολή;",
+    a: "Ήταν <strong>Γάλλος συνταγματάρχης</strong> στον οποίο η επαναστατική κυβέρνηση ανέθεσε την <strong>οργάνωση τακτικού στρατού</strong> κατά ευρωπαϊκά πρότυπα."
+  },
+  {
+    q: "Με ποιο ιστορικό παράδειγμα παρομοίασε ο Παπαφλέσσας τη μάχη στο Μανιάκι;",
+    a: "Την ονόμασε <strong>«Λεωνίδειο μάχη»</strong> της Επανάστασης — όπως η θυσία του Λεωνίδα στις Θερμοπύλες — γιατί ήξερε ότι δεν μπορούσε να νικήσει."
+  }
+];
+
+let current = 0;
+let isFlipped = false;
+let order = [...Array(cards.length).keys()];
+
+function render() {
+  const c = cards[order[current]];
+  document.getElementById('cardQ').innerHTML = c.q;
+  document.getElementById('cardA').innerHTML = c.a;
+  document.getElementById('progText').textContent = `${current + 1} / ${cards.length}`;
+  document.getElementById('progFill').style.width = `${((current + 1) / cards.length) * 100}%`;
+  document.getElementById('btnPrev').disabled = current === 0;
+  document.getElementById('btnNext').disabled = current === cards.length - 1;
+  const card = document.getElementById('card');
+  if (isFlipped) { card.classList.add('flipped'); } else { card.classList.remove('flipped'); }
+}
+
+function flipCard() {
+  isFlipped = !isFlipped;
+  document.getElementById('card').classList.toggle('flipped');
+}
+
+function nextCard() {
+  if (current < cards.length - 1) {
+    isFlipped = false;
+    const area = document.getElementById('cardArea');
+    area.classList.add('switching');
+    setTimeout(() => {
+      current++;
+      render();
+      area.classList.remove('switching');
+    }, 150);
+  }
+}
+
+function prevCard() {
+  if (current > 0) {
+    isFlipped = false;
+    current--;
+    render();
+  }
+}
+
+function shuffle() {
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  current = 0;
+  isFlipped = false;
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

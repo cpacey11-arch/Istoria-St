@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Κουίζ – Ο Ιμπραήμ & ο Παπαφλέσσας</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9933a;
+    --gold-light: #e8b96a;
+    --dark: #1a120a;
+    --parchment: #f5ead8;
+    --smoke: #2e1f10;
+    --ink: #3b2510;
+    --red: #8b1a1a;
+    --green: #2d6a3f;
+    --green-light: #3d8a52;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--dark);
+    background-image:
+      radial-gradient(ellipse at 10% 30%, rgba(201,147,58,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse at 90% 70%, rgba(139,26,26,0.06) 0%, transparent 55%);
+    font-family: 'EB Garamond', serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 80px;
+    color: var(--parchment);
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 44px;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .chapter-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    opacity: 0.85;
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.3rem, 4vw, 2rem);
+    font-weight: 900;
+    color: var(--parchment);
+    line-height: 1.25;
+    text-shadow: 0 2px 20px rgba(201,147,58,0.25);
+  }
+
+  h1 span { color: var(--gold); }
+
+  .subtitle {
+    margin-top: 10px;
+    font-size: 1rem;
+    font-style: italic;
+    color: rgba(245,234,216,0.55);
+  }
+
+  .divider {
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 14px auto 0;
+  }
+
+  /* Score bar */
+  .scorebar {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 30px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    animation: fadeIn 0.8s ease 0.4s both;
+  }
+
+  .scorebar span { opacity: 0.7; }
+  .scorebar strong { color: var(--gold-light); }
+
+  /* Quiz container */
+  .quiz-wrap {
+    width: 100%;
+    max-width: 680px;
+    animation: fadeIn 0.7s ease 0.5s both;
+  }
+
+  /* Question card */
+  .question-block {
+    background: linear-gradient(145deg, var(--smoke) 0%, #1e1008 100%);
+    border: 1px solid rgba(201,147,58,0.25);
+    border-radius: 16px;
+    padding: 32px 36px;
+    margin-bottom: 16px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(201,147,58,0.1);
+  }
+
+  .q-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .q-num {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    background: rgba(201,147,58,0.1);
+    border: 1px solid rgba(201,147,58,0.25);
+    border-radius: 20px;
+    padding: 4px 12px;
+    white-space: nowrap;
+  }
+
+  .q-text {
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    line-height: 1.55;
+    font-weight: 600;
+    color: var(--parchment);
+  }
+
+  /* Options */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .opt {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(245,234,216,0.12);
+    border-radius: 10px;
+    padding: 13px 18px;
+    font-size: 1rem;
+    color: rgba(245,234,216,0.85);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    font-family: 'EB Garamond', serif;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .opt:hover:not(.answered) {
+    background: rgba(201,147,58,0.08);
+    border-color: rgba(201,147,58,0.35);
+    color: var(--parchment);
+    transform: translateX(4px);
+  }
+
+  .opt-letter {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    color: var(--gold);
+    opacity: 0.7;
+    min-width: 20px;
+  }
+
+  .opt.correct {
+    background: rgba(45,106,63,0.25) !important;
+    border-color: var(--green-light) !important;
+    color: #a8e6b8 !important;
+    cursor: default;
+  }
+
+  .opt.wrong {
+    background: rgba(139,26,26,0.25) !important;
+    border-color: #c04040 !important;
+    color: #f0a0a0 !important;
+    cursor: default;
+  }
+
+  .opt.revealed {
+    background: rgba(45,106,63,0.12) !important;
+    border-color: rgba(45,106,63,0.4) !important;
+    color: rgba(168,230,184,0.7) !important;
+    cursor: default;
+  }
+
+  /* Explanation */
+  .explanation {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: rgba(201,147,58,0.07);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: rgba(245,234,216,0.75);
+    line-height: 1.6;
+    display: none;
+  }
+
+  .explanation.show { display: block; }
+
+  /* Results panel */
+  .results {
+    display: none;
+    text-align: center;
+    background: linear-gradient(145deg, var(--smoke), #1a0e02);
+    border: 1px solid rgba(201,147,58,0.4);
+    border-radius: 20px;
+    padding: 48px 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+
+  .results.show { display: block; }
+
+  .result-score {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(3rem, 10vw, 5rem);
+    font-weight: 900;
+    color: var(--gold);
+    text-shadow: 0 0 40px rgba(201,147,58,0.4);
+    line-height: 1;
+  }
+
+  .result-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    color: rgba(201,147,58,0.6);
+    margin-top: 8px;
+    margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+
+  .result-msg {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: rgba(245,234,216,0.8);
+    max-width: 440px;
+    margin: 0 auto 32px;
+  }
+
+  .result-msg strong { color: var(--gold-light); }
+
+  .btn-restart {
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--red), #6b1212);
+    color: var(--parchment);
+    padding: 14px 36px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(139,26,26,0.35);
+    transition: all 0.2s ease;
+  }
+
+  .btn-restart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(139,26,26,0.45);
+  }
+
+  /* Stars */
+  .stars { font-size: 2rem; margin-bottom: 16px; letter-spacing: 0.1em; }
+
+  /* Footer */
+  .footer {
+    position: fixed;
+    top: 14px;
+    right: 18px;
+    font-size: 0.65rem;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.08em;
+    color: rgba(201,147,58,0.45);
+    z-index: 100;
+  }
+
+  /* Corner ornament */
+  .corner { position: absolute; width: 20px; height: 20px; opacity: 0.25; }
+  .corner::before, .corner::after { content: ''; position: absolute; background: var(--gold); }
+  .corner::before { width: 2px; height: 100%; }
+  .corner::after { width: 100%; height: 2px; }
+  .corner.tl { top: 12px; left: 12px; }
+  .corner.tr { top: 12px; right: 12px; transform: scaleX(-1); }
+  .corner.bl { bottom: 12px; left: 12px; transform: scaleY(-1); }
+  .corner.br { bottom: 12px; right: 12px; transform: scale(-1); }
+
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+  .answered { pointer-events: none; }
+</style>
+</head>
+<body>
+
+<div class="footer">© myspiderwebsite | Christina Papadimitriou</div>
+
+<header>
+  <div class="chapter-label">Κεφάλαιο 11 · Ιστορία ΣΤ΄ Δημοτικού</div>
+  <h1>Ο <span>Ιμπραήμ</span> στην Πελοπόννησο<br>& η θυσία του <span>Παπαφλέσσα</span></h1>
+  <p class="subtitle">Κουίζ Αξιολόγησης – 10 Ερωτήσεις</p>
+  <div class="divider"></div>
+</header>
+
+<div class="scorebar">
+  <span>Σκορ: <strong id="scoreVal">0</strong> / 10</span>
+  <span>·</span>
+  <span>Απαντήθηκαν: <strong id="answeredVal">0</strong> / 10</span>
+</div>
+
+<div class="quiz-wrap" id="quizWrap"></div>
+<div class="results" id="results">
+  <div class="corner tl"></div><div class="corner tr"></div>
+  <div class="corner bl"></div><div class="corner br"></div>
+  <div class="stars" id="stars"></div>
+  <div class="result-score" id="finalScore"></div>
+  <div class="result-label">Σωστές απαντήσεις</div>
+  <div class="result-msg" id="resultMsg"></div>
+  <button class="btn-restart" onclick="restart()">↺ Ξεκίνα ξανά</button>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "Πότε αποβιβάστηκε ο Ιμπραήμ Πασάς στην Πελοπόννησο;",
+    opts: ["Φεβρουάριος 1821", "Φεβρουάριος 1825", "Μάιος 1825", "Ιανουάριος 1824"],
+    correct: 1,
+    exp: "Ο Ιμπραήμ αποβιβάστηκε στη Μεθώνη τον Φεβρουάριο του 1825."
+  },
+  {
+    q: "Ποιος ήταν ο πατέρας του Ιμπραήμ Πασά;",
+    opts: ["Ο Σουλτάνος Μαχμούτ Β΄", "Ο Αλή Πασάς Τεπελενλής", "Ο Μεχμέτ Αλής, ηγεμόνας Αιγύπτου", "Ο Χουρσίτ Πασάς"],
+    correct: 2,
+    exp: "Ο Ιμπραήμ ήταν γιος του Μεχμέτ Αλή, ηγεμόνα της Αιγύπτου."
+  },
+  {
+    q: "Πού οχυρώθηκε ο Παπαφλέσσας αναμένοντας τον Ιμπραήμ;",
+    opts: ["Στην Τριπολιτσά", "Στο Ναύπλιο", "Στο Μανιάκι Μεσσηνίας", "Στα Δερβενάκια"],
+    correct: 2,
+    exp: "Ο Παπαφλέσσας οχυρώθηκε σε τρία «ταμπούρια» στο Μανιάκι Μεσσηνίας."
+  },
+  {
+    q: "Τι ονόμασε ο Παπαφλέσσας τη μάχη στο Μανιάκι πριν αυτή γίνει;",
+    opts: ["«Μαραθώνια μάχη»", "«Λεωνίδειο μάχη»", "«Ιερή μάχη»", "«Ελληνική Θερμοπύλη»"],
+    correct: 1,
+    exp: "Ο Παπαφλέσσας είχε ονομάσει τη μάχη «Λεωνίδειο», παρομοιάζοντάς τη με τη θυσία του Λεωνίδα."
+  },
+  {
+    q: "Πόσες ώρες κράτησε η μάχη στο Μανιάκι;",
+    opts: ["Τέσσερις ώρες", "Δύο ώρες", "Δώδεκα ώρες", "Οκτώ ώρες"],
+    correct: 3,
+    exp: "Η μάχη στο Μανιάκι κράτησε οκτώ ολόκληρες ώρες."
+  },
+  {
+    q: "Ποια στρατηγική χρησιμοποίησε ο Κολοκοτρώνης εναντίον του Ιμπραήμ;",
+    opts: ["Άμυνα σε φρούρια", "Κλεφτοπόλεμο", "Ανοιχτές μάχες πεδίου", "Ναυτικό αποκλεισμό"],
+    correct: 1,
+    exp: "Ο Κολοκοτρώνης εφάρμοσε τακτικές κλεφτοπόλεμου: αιφνιδιαστικές επιθέσεις και νυχτερινές επιδρομές."
+  },
+  {
+    q: "Πού αποβιβάστηκε ο Ιμπραήμ με τον στρατό του;",
+    opts: ["Στο Ναύπλιο", "Στην Κόρινθο", "Στη Μεθώνη", "Στην Καλαμάτα"],
+    correct: 2,
+    exp: "Ο Ιμπραήμ αποβιβάστηκε στη Μεθώνη της νοτιοδυτικής Πελοποννήσου."
+  },
+  {
+    q: "Ποιος Γάλλος αξιωματικός ανέλαβε να οργανώσει τακτικό στρατό στην Ελλάδα;",
+    opts: ["Ο Λόρδος Βύρωνας", "Ο Φαβιέρος", "Ο Μαυροκορδάτος", "Ο Ρήγας"],
+    correct: 1,
+    exp: "Ο Γάλλος συνταγματάρχης Κάρολος Φαβιέρος ανέλαβε την οργάνωση τακτικού στρατού κατά ευρωπαϊκά πρότυπα."
+  },
+  {
+    q: "Τι έκανε ο Ιμπραήμ όταν βρήκε το σώμα του Παπαφλέσσα μετά τη μάχη;",
+    opts: ["Το ατίμασε δημόσια", "Τον θεώρησε δειλό εχθρό", "Εξέφρασε θαυμασμό και τον φίλησε", "Αδιαφόρησε τελείως"],
+    correct: 2,
+    exp: "Ο Ιμπραήμ αποκάλεσε τον Παπαφλέσσα γενναίο πολεμιστή και τον φίλησε — χειρονομία που έμεινε στην ιστορία."
+  },
+  {
+    q: "Ποιο γεγονός ακολούθησε τη μάχη στο Μανιάκι που ενίσχυσε τον αγώνα;",
+    opts: ["Η ναυμαχία του Ναβαρίνου", "Η αποφυλάκιση του Κολοκοτρώνη και ο ορισμός του ως αρχιστράτηγου", "Η άφιξη βρετανικού στόλου", "Η συνθήκη του Λονδίνου"],
+    correct: 1,
+    exp: "Ο Κολοκοτρώνης αποφυλακίστηκε στις 17 Μαΐου 1825 και διορίστηκε αρχιστράτηγος μετά τη θυσία του Παπαφλέσσα."
+  }
+];
+
+let score = 0;
+let answered = 0;
+
+function buildQuiz() {
+  const wrap = document.getElementById('quizWrap');
+  wrap.innerHTML = '';
+  questions.forEach((q, i) => {
+    const letters = ['Α', 'Β', 'Γ', 'Δ'];
+    const block = document.createElement('div');
+    block.className = 'question-block';
+    block.id = `q${i}`;
+    block.innerHTML = `
+      <div class="q-header">
+        <span class="q-num">Ερώτηση ${i + 1}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="opts${i}">
+        ${q.opts.map((o, j) => `
+          <button class="opt" onclick="answer(${i}, ${j})">
+            <span class="opt-letter">${letters[j]}.</span>
+            <span>${o}</span>
+          </button>`).join('')}
+      </div>
+      <div class="explanation" id="exp${i}">${q.exp}</div>
+    `;
+    wrap.appendChild(block);
+  });
+}
+
+function answer(qIdx, optIdx) {
+  const opts = document.querySelectorAll(`#opts${qIdx} .opt`);
+  opts.forEach(o => o.classList.add('answered'));
+
+  if (optIdx === questions[qIdx].correct) {
+    opts[optIdx].classList.add('correct');
+    score++;
+  } else {
+    opts[optIdx].classList.add('wrong');
+    opts[questions[qIdx].correct].classList.add('revealed');
+  }
+
+  document.getElementById(`exp${qIdx}`).classList.add('show');
+  answered++;
+  document.getElementById('scoreVal').textContent = score;
+  document.getElementById('answeredVal').textContent = answered;
+
+  if (answered === questions.length) {
+    setTimeout(showResults, 800);
+  }
+}
+
+function showResults() {
+  document.getElementById('quizWrap').style.display = 'none';
+  const res = document.getElementById('results');
+  res.classList.add('show');
+  document.getElementById('finalScore').textContent = `${score} / 10`;
+
+  let stars = '';
+  if (score >= 9) stars = '★★★★★';
+  else if (score >= 7) stars = '★★★★☆';
+  else if (score >= 5) stars = '★★★☆☆';
+  else stars = '★★☆☆☆';
+  document.getElementById('stars').textContent = stars;
+
+  let msg = '';
+  if (score === 10) msg = 'Τέλεια! Γνωρίζεις άριστα την ιστορία του <strong>Παπαφλέσσα</strong> και του <strong>Ιμπραήμ</strong>. Αξίζεις τα εύσημα!';
+  else if (score >= 8) msg = `Πολύ καλά! <strong>${score}</strong> στα 10. Με λίγη επανάληψη θα φτάσεις την τελειότητα.`;
+  else if (score >= 6) msg = `Καλά! <strong>${score}</strong> στα 10. Ξαναδιάβασε τα σημεία που σε δυσκόλεψαν.`;
+  else msg = `<strong>${score}</strong> στα 10. Μην αποθαρρύνεσαι — κάνε μια ακόμα προσπάθεια!`;
+  document.getElementById('resultMsg').innerHTML = msg;
+  res.scrollIntoView({ behavior: 'smooth' });
+}
+
+function restart() {
+  score = 0;
+  answered = 0;
+  document.getElementById('scoreVal').textContent = 0;
+  document.getElementById('answeredVal').textContent = 0;
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('quizWrap').style.display = '';
+  buildQuiz();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+buildQuiz();
+</script>
+</body>
+</html>

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Κεφάλαιο 13 – Κουίζ | Οι αγώνες του Καραϊσκάκη</title>
+<link href="https://fonts.googleapis.com/css2?family=GFS+Didot&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --gold: #c8922a;
+    --gold-light: #f5d98b;
+    --cream: #fdf6e3;
+    --red: #8b1a1a;
+    --green: #2e7d32;
+    --light-green: #e8f5e9;
+    --light-red: #ffebee;
+    --shadow: 0 8px 32px rgba(26,39,68,0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: linear-gradient(135deg, #1a2744 0%, #2c3e6b 50%, #1a2744 100%);
+    min-height: 100vh;
+    padding: 20px 16px 50px;
+    color: var(--navy);
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  header h1 {
+    font-family: 'GFS Didot', serif;
+    color: var(--gold-light);
+    font-size: clamp(1.3rem, 4vw, 1.9rem);
+    margin-bottom: 4px;
+  }
+
+  header p {
+    color: rgba(245,217,139,0.65);
+    font-size: 0.88rem;
+    letter-spacing: 0.05em;
+  }
+
+  .quiz-container {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  /* Progress */
+  .progress-wrap {
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    height: 5px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+
+  .q-counter {
+    color: rgba(245,217,139,0.6);
+    font-size: 0.8rem;
+    text-align: right;
+    margin-bottom: 6px;
+    letter-spacing: 0.06em;
+  }
+
+  /* Question card */
+  .q-card {
+    background: white;
+    border-radius: 18px;
+    padding: 28px 24px 22px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+    border-top: 4px solid var(--gold);
+  }
+
+  .q-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+
+  .q-text {
+    font-family: 'GFS Didot', serif;
+    font-size: clamp(1rem, 3vw, 1.15rem);
+    color: var(--navy);
+    line-height: 1.55;
+  }
+
+  /* Options */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .option-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    padding: 13px 16px;
+    cursor: pointer;
+    text-align: left;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    color: var(--navy);
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    width: 100%;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--gold);
+    background: #fdf6e3;
+    transform: translateX(3px);
+  }
+
+  .option-btn:disabled { cursor: default; }
+
+  .option-btn.correct {
+    background: var(--light-green);
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .option-btn.wrong {
+    background: var(--light-red);
+    border-color: var(--red);
+    color: var(--red);
+    text-decoration: line-through;
+    opacity: 0.75;
+  }
+
+  .option-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--navy);
+    transition: all 0.2s;
+  }
+
+  .option-btn.correct .option-letter { background: var(--green); color: white; }
+  .option-btn.wrong .option-letter { background: var(--red); color: white; }
+
+  /* Feedback */
+  .feedback {
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    margin-bottom: 14px;
+    display: none;
+  }
+
+  .feedback.correct-fb {
+    background: var(--light-green);
+    color: var(--green);
+    border: 1.5px solid var(--green);
+  }
+
+  .feedback.wrong-fb {
+    background: var(--light-red);
+    color: var(--red);
+    border: 1.5px solid var(--red);
+  }
+
+  .feedback-icon { font-size: 1.1rem; margin-right: 6px; }
+
+  /* Next button */
+  .btn-next {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: var(--gold);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    display: none;
+  }
+
+  .btn-next:hover { background: #a87520; transform: translateY(-1px); }
+
+  /* Results */
+  #results-screen {
+    display: none;
+    background: white;
+    border-radius: 20px;
+    padding: 36px 28px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+
+  .result-icon { font-size: 3.5rem; margin-bottom: 16px; }
+
+  .result-score {
+    font-family: 'GFS Didot', serif;
+    font-size: 3rem;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .result-score span { color: var(--gold); }
+
+  .result-label {
+    font-size: 1.15rem;
+    color: #555;
+    margin-bottom: 20px;
+  }
+
+  .result-msg {
+    background: #fdf6e3;
+    border-left: 4px solid var(--gold);
+    padding: 14px 18px;
+    border-radius: 0 12px 12px 0;
+    font-size: 0.95rem;
+    color: var(--navy);
+    line-height: 1.6;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+
+  .btn-restart {
+    background: var(--navy);
+    color: white;
+    border: none;
+    padding: 14px 36px;
+    border-radius: 50px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-restart:hover { background: #2c3e6b; transform: translateY(-1px); }
+
+  footer {
+    text-align: center;
+    color: rgba(245,217,139,0.3);
+    font-size: 0.72rem;
+    margin-top: 32px;
+    letter-spacing: 0.06em;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Κεφάλαιο 13 – Κουίζ</h1>
+  <p>Οι αγώνες του Καραϊσκάκη · 10 ερωτήσεις πολλαπλής επιλογής</p>
+</header>
+
+<div class="quiz-container">
+  <div id="quiz-screen">
+    <div class="q-counter" id="qCounter">Ερώτηση 1 από 10</div>
+    <div class="progress-wrap">
+      <div class="progress-fill" id="progressFill" style="width:10%"></div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label">Ερώτηση</div>
+      <div class="q-text" id="qText"></div>
+    </div>
+
+    <div class="options" id="optionsDiv"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="btn-next" id="btnNext" onclick="nextQuestion()">Επόμενη ερώτηση →</button>
+  </div>
+
+  <div id="results-screen">
+    <div class="result-icon" id="resultIcon"></div>
+    <div class="result-score"><span id="finalScore"></span> / 10</div>
+    <div class="result-label" id="resultLabel"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="btn-restart" onclick="restartQuiz()">↺ Ξεκίνα ξανά</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "Τι συνέβη στο Μεσολόγγι τον Απρίλιο του 1826 που άνοιξε τον δρόμο για την πολιορκία της Ακρόπολης;",
+    opts: ["Έγινε μεγάλη ελληνική νίκη κατά των Τούρκων", "Το Μεσολόγγι έπεσε στα χέρια των Οθωμανών", "Ο Καραϊσκάκης κατέλαβε την πόλη", "Οι Άγγλοι αποβιβάστηκαν εκεί για βοήθεια"],
+    correct: 1,
+    explanation: "Τον Απρίλιο του 1826 το Μεσολόγγι έπεσε, επιτρέποντας στον Κιουταχή να προχωρήσει προς την Αττική και να πολιορκήσει την Ακρόπολη."
+  },
+  {
+    q: "Ποιος ήταν ο Κιουταχής και τι ρόλο έπαιξε;",
+    opts: ["Έλληνας αρχηγός που πρόδωσε την Επανάσταση", "Οθωμανός στρατηγός που πολιόρκησε Μεσολόγγι και Ακρόπολη", "Άγγλος αξιωματικός που βοήθησε τους Έλληνες", "Τούρκος πασάς της Θεσσαλονίκης"],
+    correct: 1,
+    explanation: "Ο Κιουταχής (Ρεσίτ Πασάς) ήταν Οθωμανός στρατηγός που κυρίεψε το Μεσολόγγι και στη συνέχεια εισέβαλε στην Αττική για να καταστείλει την Επανάσταση στη Ρούμελη."
+  },
+  {
+    q: "Ποια στρατηγική επέλεξε ο Καραϊσκάκης για να βοηθήσει την πολιορκημένη Ακρόπολη;",
+    opts: ["Απευθείας επίθεση στην Αθήνα", "Αντιπερισπασμό — επιχείρηση στα νώτα των Τούρκων, στη Στερεά", "Διαπραγματεύσεις με τον Κιουταχή", "Αναζήτηση βοήθειας από τη Γαλλία"],
+    correct: 1,
+    explanation: "Ο Καραϊσκάκης χρησιμοποίησε τον αντιπερισπασμό: κινήθηκε στη Στερεά Ελλάδα, στα νώτα των Τούρκων, αναγκάζοντάς τους να αποσύρουν δυνάμεις από την Ακρόπολη."
+  },
+  {
+    q: "Πού έγινε η σημαντικότερη νίκη του Καραϊσκάκη τον Νοέμβριο του 1826;",
+    opts: ["Στο Μεσολόγγι", "Στην Αθήνα", "Στην Αράχοβα", "Στο Νέο Φάληρο"],
+    correct: 2,
+    explanation: "Η Μάχη της Αράχοβας (Νοέμβριος 1826) ήταν επτά ημερών σκληρή σύγκρουση που έληξε με μεγάλη ελληνική νίκη και ανέδειξε τον Καραϊσκάκη σε κορυφαίο στρατιωτικό ηγέτη."
+  },
+  {
+    q: "Τι σήμαινε η λέξη «Ρούμελη»;",
+    opts: ["«Χώρα των ελεύθερων» στα τουρκικά", "«Χώρα των Ρωμιών» από την τουρκική λέξη Rumili", "«Βόρεια Ελλάδα» στα αρχαία ελληνικά", "«Γη των βουνών» στα σλαβικά"],
+    correct: 1,
+    explanation: "Η Ρούμελη (Στερεά Ελλάδα) πήρε το όνομά της από την τουρκική λέξη Rumili που σημαίνει «χώρα των Ρωμιών»."
+  },
+  {
+    q: "Ποιοι δύο ξένοι αξιωματικοί ανέλαβαν την αρχηγία των ελληνικών δυνάμεων το 1827;",
+    opts: ["Ο Μπάιρον και ο Νάπιερ", "Ο Τσώρτς και ο Κόχραν", "Ο Φαβιέρος και ο Μαιζόν", "Ο Χάμιλτον και ο Άστινγκς"],
+    correct: 1,
+    explanation: "Ο σερ Ρίτσαρντ Τσώρτς ανέλαβε τις χερσαίες δυνάμεις και ο λόρδος Κόχραν τις ναυτικές. Αποφάσισαν να επιτεθούν άμεσα για να σώσουν την Ακρόπολη."
+  },
+  {
+    q: "Πώς τραυματίστηκε θανάσιμα ο Καραϊσκάκης;",
+    opts: ["Σε κανονιοβολισμό κατά τη διάρκεια τακτικής μάχης", "Ορμώντας άρρωστος στο άλογό του σε μια απροσδόκητη συμπλοκή στα φυλάκια", "Από προδοσία μέσα στη σκηνή του", "Σε ναυμαχία κοντά στο Φάληρο"],
+    correct: 1,
+    explanation: "Αν και έπασχε από υψηλό πυρετό, ο Καραϊσκάκης όρμησε πάνω στο άλογό του όταν ξέσπασε μια αναπάντεχη συμπλοκή, τραυματίστηκε θανάσιμα και πέθανε την επόμενη μέρα."
+  },
+  {
+    q: "Πότε ακριβώς πέθανε ο Καραϊσκάκης;",
+    opts: ["12 Μαρτίου 1826", "23 Απριλίου 1827", "3 Μαΐου 1827", "15 Νοεμβρίου 1826"],
+    correct: 1,
+    explanation: "Ο Καραϊσκάκης πέθανε στις 23 Απριλίου 1827, στο Νέο Φάληρο."
+  },
+  {
+    q: "Τι συνέβη στην Ακρόπολη τον Μάιο του 1827;",
+    opts: ["Απελευθερώθηκε από τους Έλληνες αγωνιστές", "Παραδόθηκε στους Τούρκους πολιορκητές", "Κατεστράφη από έκρηξη πυριτιδαποθήκης", "Χρησιμοποιήθηκε ως νοσοκομείο"],
+    correct: 1,
+    explanation: "Τον Μάιο του 1827, μετά τον θάνατο του Καραϊσκάκη και την καταστροφική ήττα που ακολούθησε, η Ακρόπολη παραδόθηκε στους Τούρκους πολιορκητές."
+  },
+  {
+    q: "Σε ποια σειρά συνέβησαν τα γεγονότα;",
+    opts: [
+      "Αράχοβα → Μεσολόγγι → θάνατος Καραϊσκάκη → παράδοση Ακρόπολης",
+      "Μεσολόγγι → Αράχοβα → θάνατος Καραϊσκάκη → παράδοση Ακρόπολης",
+      "Παράδοση Ακρόπολης → Αράχοβα → Μεσολόγγι → θάνατος Καραϊσκάκη",
+      "Μεσολόγγι → θάνατος Καραϊσκάκη → Αράχοβα → παράδοση Ακρόπολης"
+    ],
+    correct: 1,
+    explanation: "Η σωστή σειρά: Πτώση Μεσολογγίου (Απρ. 1826) → Μάχη Αράχοβας (Νοέμ. 1826) → Θάνατος Καραϊσκάκη (23 Απρ. 1827) → Παράδοση Ακρόπολης (Μάιος 1827)."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+
+function loadQuestion() {
+  answered = false;
+  const q = questions[current];
+  document.getElementById('qCounter').textContent = 'Ερώτηση ' + (current + 1) + ' από ' + questions.length;
+  document.getElementById('progressFill').style.width = ((current + 1) / questions.length * 100) + '%';
+  document.getElementById('qText').textContent = q.q;
+
+  const letters = ['Α', 'Β', 'Γ', 'Δ'];
+  const optDiv = document.getElementById('optionsDiv');
+  optDiv.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = '<span class="option-letter">' + letters[i] + '</span><span>' + opt + '</span>';
+    btn.onclick = () => selectAnswer(i, btn);
+    optDiv.appendChild(btn);
+  });
+
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('btnNext').style.display = 'none';
+}
+
+function selectAnswer(idx, btn) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const allBtns = document.querySelectorAll('.option-btn');
+  allBtns.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('feedback');
+
+  if (idx === q.correct) {
+    btn.classList.add('correct');
+    score++;
+    fb.className = 'feedback correct-fb';
+    fb.innerHTML = '<span class="feedback-icon">✅</span> Σωστό! ' + q.explanation;
+  } else {
+    btn.classList.add('wrong');
+    allBtns[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong-fb';
+    fb.innerHTML = '<span class="feedback-icon">❌</span> Λάθος. ' + q.explanation;
+  }
+
+  fb.style.display = 'block';
+  const nextBtn = document.getElementById('btnNext');
+  nextBtn.style.display = 'block';
+  nextBtn.textContent = current < questions.length - 1 ? 'Επόμενη ερώτηση →' : 'Δες τα αποτελέσματα →';
+}
+
+function nextQuestion() {
+  current++;
+  if (current < questions.length) {
+    loadQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  const res = document.getElementById('results-screen');
+  res.style.display = 'block';
+
+  document.getElementById('finalScore').textContent = score;
+
+  let icon, label, msg;
+  if (score === 10) {
+    icon = '🏆'; label = 'Άριστα! Εξαιρετική δουλειά!';
+    msg = 'Γνωρίζεις πολύ καλά τους αγώνες του Καραϊσκάκη. Η στρατηγική, τα γεγονότα, οι ημερομηνίες — τα έχεις όλα!';
+  } else if (score >= 7) {
+    icon = '⭐'; label = 'Πολύ καλά!';
+    msg = 'Κατέχεις καλά την ύλη! Ξαναδές τις ερωτήσεις που έκανες λάθος και θα τα πας άριστα.';
+  } else if (score >= 5) {
+    icon = '📚'; label = 'Καλή προσπάθεια!';
+    msg = 'Έχεις καλή βάση αλλά αξίζει λίγη ακόμα εξάσκηση. Δοκίμασε και τις καρτέλες μελέτης!';
+  } else {
+    icon = '💪'; label = 'Χρειάζεσαι λίγη ακόμα εξάσκηση';
+    msg = 'Μην αποθαρρύνεσαι! Ξαναδές το μάθημα, χρησιμοποίησε τις καρτέλες μελέτης και ξαναπρόσπαθε.';
+  }
+
+  document.getElementById('resultIcon').textContent = icon;
+  document.getElementById('resultLabel').textContent = label;
+  document.getElementById('resultMsg').textContent = msg;
+}
+
+function restartQuiz() {
+  current = 0;
+  score = 0;
+  document.getElementById('results-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+
+<footer>© myspiderwebsite | Christina Papadimitriou</footer>
+</body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Φιλελληνισμός – Κουίζ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --blue: #1a3a5c;
+    --gold: #c9a84c;
+    --cream: #fdf8ee;
+    --correct: #2e7d52;
+    --wrong: #a83232;
+    --correct-bg: #e8f5ee;
+    --wrong-bg: #faeaea;
+    --neutral: #dce8f5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--cream);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+    max-width: 680px;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--blue);
+  }
+
+  header p { color: #666; margin-top: 6px; font-size: 0.95rem; }
+
+  .quiz-wrap {
+    width: 100%;
+    max-width: 680px;
+  }
+
+  /* Progress */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .progress-bar-wrap {
+    flex: 1;
+    height: 8px;
+    background: #d8e8f2;
+    border-radius: 8px;
+  }
+
+  .progress-bar {
+    height: 8px;
+    background: var(--gold);
+    border-radius: 8px;
+    transition: width 0.4s;
+  }
+
+  .q-label {
+    font-size: 0.85rem;
+    color: #777;
+    white-space: nowrap;
+  }
+
+  /* Question card */
+  .question-card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px 32px;
+    box-shadow: 0 4px 24px rgba(26,58,92,0.08);
+    margin-bottom: 20px;
+    border-left: 5px solid var(--blue);
+  }
+
+  .question-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: var(--blue);
+    line-height: 1.55;
+    margin-bottom: 20px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option-btn {
+    background: var(--neutral);
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.97rem;
+    color: var(--blue);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    line-height: 1.45;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    background: #c5d9ee;
+    border-color: var(--blue);
+  }
+
+  .option-btn.correct {
+    background: var(--correct-bg);
+    border-color: var(--correct);
+    color: var(--correct);
+    font-weight: 600;
+  }
+
+  .option-btn.wrong {
+    background: var(--wrong-bg);
+    border-color: var(--wrong);
+    color: var(--wrong);
+  }
+
+  .option-btn:disabled { cursor: default; }
+
+  .feedback {
+    margin-top: 14px;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    padding: 10px 14px;
+    border-radius: 8px;
+    display: none;
+  }
+
+  .feedback.correct { background: var(--correct-bg); color: var(--correct); display: block; }
+  .feedback.wrong { background: var(--wrong-bg); color: var(--wrong); display: block; }
+
+  /* Navigation */
+  .nav-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 32px;
+  }
+
+  .btn {
+    padding: 11px 26px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.97rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-next { background: var(--blue); color: white; }
+  .btn-next:hover { background: #14304e; }
+  .btn-next:disabled { opacity: 0.4; cursor: default; }
+
+  /* Results */
+  .results {
+    display: none;
+    text-align: center;
+    background: white;
+    border-radius: 20px;
+    padding: 40px 32px;
+    box-shadow: 0 4px 32px rgba(26,58,92,0.10);
+    max-width: 680px;
+    width: 100%;
+  }
+
+  .results h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--blue);
+    margin-bottom: 12px;
+  }
+
+  .score-circle {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px auto;
+  }
+
+  .result-msg {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .review-list {
+    text-align: left;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .review-item {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .review-item.r-correct { background: var(--correct-bg); color: var(--correct); }
+  .review-item.r-wrong { background: var(--wrong-bg); color: var(--wrong); }
+
+  .btn-restart { background: var(--gold); color: white; margin-top: 24px; }
+  .btn-restart:hover { background: #b8933e; }
+
+  footer {
+    margin-top: 48px;
+    font-size: 0.78rem;
+    color: #bbb;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Ο Φιλελληνισμός</h1>
+  <p>Κεφάλαιο 14 · Κουίζ 10 Ερωτήσεων</p>
+</header>
+
+<div class="quiz-wrap" id="quizWrap">
+  <div class="progress-row">
+    <div class="q-label" id="qLabel">Ερώτηση 1 / 10</div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progressBar" style="width:10%"></div>
+    </div>
+  </div>
+
+  <div class="question-card" id="questionCard">
+    <h2 id="questionText"></h2>
+    <div class="options" id="optionsDiv"></div>
+    <div class="feedback" id="feedbackDiv"></div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-next" id="nextBtn" disabled onclick="nextQuestion()">Επόμενη →</button>
+  </div>
+</div>
+
+<div class="results" id="resultsDiv">
+  <h2>Αποτέλεσμα Κουίζ</h2>
+  <div class="score-circle" id="scoreCircle"></div>
+  <p class="result-msg" id="resultMsg"></p>
+  <div class="review-list" id="reviewList"></div>
+  <button class="btn btn-restart" onclick="restartQuiz()">↺ Ξανά από την αρχή</button>
+</div>
+
+<footer>© myspiderwebsite | Christina Papadimitriou</footer>
+
+<script>
+const questions = [
+  {
+    q: "Πώς ονομάζονται οι ξένοι που εμπνεύστηκαν από την Επανάσταση του 1821 και υποστήριξαν τον αγώνα των Ελλήνων;",
+    opts: ["Εθελοντές", "Φιλέλληνες", "Επαναστάτες", "Ομογενείς"],
+    correct: 1,
+    explain: "Φιλέλληνες ονομάζονται οι ξένοι που εμπνεύστηκαν από την Επανάσταση και υποστήριξαν τον αγώνα των Ελλήνων."
+  },
+  {
+    q: "Τι απέγινε ο λόρδος Μπάιρον, ο πιο γνωστός Φιλέλληνας;",
+    opts: ["Επέστρεψε στην Αγγλία πλούσιος", "Πολέμησε και νίκησε στη μάχη της Πέτας", "Πέθανε στο Μεσολόγγι από πυρετό το 1824", "Ανέλαβε πρωθυπουργός της Ελλάδας"],
+    correct: 2,
+    explain: "Ο Μπάιρον πέθανε στο Μεσολόγγι στις 19 Απριλίου 1824, σε ηλικία 36 ετών."
+  },
+  {
+    q: "Πότε συγκροτήθηκε το πρώτο Τάγμα Φιλελλήνων;",
+    opts: ["Ιούνιο 1821", "Μάιο 1822", "Ιούλιο 1823", "Απρίλιο 1824"],
+    correct: 1,
+    explain: "Το πρώτο Τάγμα Φιλελλήνων συγκροτήθηκε τον Μάιο του 1822."
+  },
+  {
+    q: "Σε ποια μάχη πολέμησε και διαλύθηκε το Τάγμα Φιλελλήνων;",
+    opts: ["Μάχη της Αθήνας", "Ναυμαχία του Ναβαρίνου", "Μάχη της Πέτας", "Μάχη του Μεσολογγίου"],
+    correct: 2,
+    explain: "Στη Μάχη της Πέτας (κοντά στην Άρτα), στις 4 Ιουλίου 1822, το Τάγμα Φιλελλήνων διαλύθηκε με μεγάλες απώλειες."
+  },
+  {
+    q: "Ποιος ήταν ο κύριος στόχος των Φιλελληνικών Επιτροπών που δημιουργήθηκαν στην Ελβετία και Γερμανία το 1821;",
+    opts: ["Η αποστολή στρατιωτών στην Ελλάδα", "Η περίθαλψη Ελλήνων προσφύγων", "Η διπλωματική πίεση στις κυβερνήσεις", "Η έκδοση φιλελληνικών εφημερίδων"],
+    correct: 1,
+    explain: "Ο αρχικός κύριος στόχος ήταν η περίθαλψη Ελλήνων προσφύγων."
+  },
+  {
+    q: "Ποιος διάσημος Γάλλος ζωγράφος δημιούργησε έργα εμπνευσμένα από τον αγώνα των Ελλήνων;",
+    opts: ["Βίκτωρ Ουγκώ", "Ευγένιος Ντελακρουά", "Πωλ Σεζάν", "Ζακ Νταβίντ"],
+    correct: 1,
+    explain: "Ο Ευγένιος Ντελακρουά ζωγράφισε τη «Σφαγή της Χίου» το 1824, ένα από τα πιο γνωστά φιλελληνικά έργα τέχνης."
+  },
+  {
+    q: "Ποιος ήταν ο ρόλος του Σάμιουελ Χάου ως Φιλέλληνα;",
+    opts: ["Ποιητής που έγραψε υπέρ των Ελλήνων", "Αμερικανός γιατρός που ίδρυσε νοσοκομείο στην Ελλάδα", "Αξιωματικός που εκπαίδευσε το Τάγμα Φιλελλήνων", "Τραπεζίτης που χρηματοδότησε τα δάνεια"],
+    correct: 1,
+    explain: "Ο Σάμιουελ Χάου ήταν Αμερικανός γιατρός που ίδρυσε νοσοκομείο για τους τραυματίες του Αγώνα."
+  },
+  {
+    q: "Ποια ήταν η μεγαλύτερη συνεισφορά του Φιλελληνισμού στην Επανάσταση του 1821;",
+    opts: ["Η κατανίκηση του τουρκικού στόλου", "Η άμεση στρατιωτική νίκη σε μάχες", "Η διεθνοποίηση του ελληνικού ζητήματος", "Η οικονομική χρεοκοπία της Οθωμανικής Αυτοκρατορίας"],
+    correct: 2,
+    explain: "Η μεγαλύτερη συνεισφορά ήταν η διεθνοποίηση: η κοινή γνώμη της Ευρώπης στράφηκε υπέρ της Ελλάδας, πιέζοντας τις κυβερνήσεις να επέμβουν."
+  },
+  {
+    q: "Ποιος Ιταλός αριστοκράτης ήταν σημαντικός Φιλέλληνας;",
+    opts: ["Γαριβάλδης", "Κόμης Σανταρόζα", "Μαντζίνι", "Βίκτωρ Εμμανουήλ"],
+    correct: 1,
+    explain: "Ο κόμης Σανταρόζα ήταν Ιταλός αριστοκράτης που, μετά την ήττα της δικής του επανάστασης, ήρθε να πολεμήσει στην Ελλάδα."
+  },
+  {
+    q: "Τι σήμαινε ο θάνατος του λόρδου Μπάιρον για το φιλελληνικό κίνημα;",
+    opts: ["Ο Φιλελληνισμός σταμάτησε εντελώς", "Ανανέωσε τα φιλελληνικά αισθήματα και αύξησε τη διεθνή πίεση υπέρ της Ελλάδας", "Απογοήτευσε τους εθελοντές που σταμάτησαν να έρχονται", "Δεν είχε καμία επίπτωση στην Ευρώπη"],
+    correct: 1,
+    explain: "Ο θάνατος του Μπάιρον συγκλόνισε την Ευρώπη και ανανέωσε τα φιλελληνικά αισθήματα, ενισχύοντας τη διεθνή πίεση υπέρ της Ελλάδας."
+  }
+];
+
+let current = 0;
+let score = 0;
+let userAnswers = [];
+let answered = false;
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('qLabel').textContent = `Ερώτηση ${current + 1} / ${questions.length}`;
+  document.getElementById('progressBar').style.width = `${((current + 1) / questions.length) * 100}%`;
+  document.getElementById('questionText').textContent = q.q;
+  const opts = document.getElementById('optionsDiv');
+  opts.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.onclick = () => selectOption(i);
+    opts.appendChild(btn);
+  });
+  document.getElementById('feedbackDiv').className = 'feedback';
+  document.getElementById('feedbackDiv').textContent = '';
+  document.getElementById('nextBtn').disabled = true;
+  answered = false;
+}
+
+function selectOption(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[idx].classList.add(idx === q.correct ? 'correct' : 'wrong');
+  if (idx !== q.correct) btns[q.correct].classList.add('correct');
+  const fb = document.getElementById('feedbackDiv');
+  if (idx === q.correct) {
+    fb.className = 'feedback correct';
+    fb.textContent = '✓ Σωστά! ' + q.explain;
+    score++;
+  } else {
+    fb.className = 'feedback wrong';
+    fb.textContent = '✗ Λάθος. ' + q.explain;
+  }
+  userAnswers.push({ q: q.q, correct: idx === q.correct, correctOpt: q.opts[q.correct], chosen: q.opts[idx] });
+  document.getElementById('nextBtn').disabled = false;
+  const isLast = current === questions.length - 1;
+  document.getElementById('nextBtn').textContent = isLast ? 'Αποτελέσματα →' : 'Επόμενη →';
+}
+
+function nextQuestion() {
+  if (current < questions.length - 1) {
+    current++;
+    loadQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  document.getElementById('quizWrap').style.display = 'none';
+  const res = document.getElementById('resultsDiv');
+  res.style.display = 'block';
+  document.getElementById('scoreCircle').textContent = `${score}/${questions.length}`;
+  let msg = '';
+  if (score === 10) msg = 'Άριστα! Έδειξες εξαιρετική γνώση του κεφαλαίου!';
+  else if (score >= 8) msg = 'Πολύ καλά! Κατέχεις καλά την ύλη.';
+  else if (score >= 6) msg = 'Καλά! Μελέτησε λίγο ακόμα τις κάρτες εξάσκησης.';
+  else msg = 'Χρειάζεσαι περισσότερη εξάσκηση. Διάβασε ξανά το κεφάλαιο!';
+  document.getElementById('resultMsg').textContent = msg;
+  const list = document.getElementById('reviewList');
+  list.innerHTML = '<p style="font-weight:600;color:#1a3a5c;margin-bottom:8px;">Ανασκόπηση:</p>';
+  userAnswers.forEach((a, i) => {
+    const div = document.createElement('div');
+    div.className = `review-item ${a.correct ? 'r-correct' : 'r-wrong'}`;
+    div.innerHTML = `<strong>${i + 1}. ${a.correct ? '✓' : '✗'}</strong> ${a.q}${!a.correct ? `<br><em>Σωστό: ${a.correctOpt}</em>` : ''}`;
+    list.appendChild(div);
+  });
+}
+
+function restartQuiz() {
+  current = 0; score = 0; userAnswers = [];
+  document.getElementById('resultsDiv').style.display = 'none';
+  document.getElementById('quizWrap').style.display = 'block';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

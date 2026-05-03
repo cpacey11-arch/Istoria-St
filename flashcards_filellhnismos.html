@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Φιλελληνισμός – Κάρτες Εξάσκησης</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --blue: #1a3a5c;
+    --gold: #c9a84c;
+    --cream: #fdf8ee;
+    --light-blue: #dce8f5;
+    --text: #1e1e1e;
+    --card-front: #1a3a5c;
+    --card-back: #fdf8ee;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--cream);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--blue);
+    line-height: 1.2;
+  }
+
+  header p {
+    color: #555;
+    margin-top: 6px;
+    font-size: 0.95rem;
+  }
+
+  .progress-bar-wrap {
+    width: 100%;
+    max-width: 600px;
+    background: #d8e8f2;
+    border-radius: 8px;
+    height: 8px;
+    margin-bottom: 12px;
+  }
+
+  .progress-bar {
+    height: 8px;
+    background: var(--gold);
+    border-radius: 8px;
+    transition: width 0.4s ease;
+  }
+
+  .counter {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  /* Card */
+  .card-container {
+    width: 100%;
+    max-width: 600px;
+    height: 260px;
+    perspective: 1200px;
+    cursor: pointer;
+    margin-bottom: 28px;
+  }
+
+  .card-inner {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .card-container.flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .card-face {
+    position: absolute;
+    width: 100%; height: 100%;
+    border-radius: 16px;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 40px;
+    text-align: center;
+    box-shadow: 0 6px 32px rgba(26,58,92,0.12);
+  }
+
+  .card-front {
+    background: var(--blue);
+    color: white;
+  }
+
+  .card-front .label {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  .card-front .question {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: white;
+  }
+
+  .card-back {
+    background: var(--cream);
+    color: var(--text);
+    transform: rotateY(180deg);
+    border: 2px solid var(--gold);
+  }
+
+  .card-back .label {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  .card-back .answer {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--blue);
+  }
+
+  .hint {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-bottom: 20px;
+  }
+
+  /* Buttons */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 600px;
+    width: 100%;
+  }
+
+  .btn {
+    padding: 10px 22px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-prev { background: #dce8f5; color: var(--blue); }
+  .btn-prev:hover { background: #c5d9ee; }
+  .btn-next { background: var(--blue); color: white; }
+  .btn-next:hover { background: #14304e; }
+  .btn-shuffle { background: var(--gold); color: white; }
+  .btn-shuffle:hover { background: #b8933e; }
+  .btn-reset { background: #f0e8d0; color: #7a6030; }
+  .btn-reset:hover { background: #e0d4b0; }
+
+  .score-section {
+    margin-top: 32px;
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+  }
+
+  .know-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 12px;
+  }
+
+  .btn-know { background: #2e7d52; color: white; }
+  .btn-know:hover { background: #235f3e; }
+  .btn-dontknow { background: #a83232; color: white; }
+  .btn-dontknow:hover { background: #7e2424; }
+
+  .score-display {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 16px;
+  }
+
+  .score-display span { font-weight: 600; color: var(--blue); }
+
+  footer {
+    margin-top: 48px;
+    font-size: 0.78rem;
+    color: #aaa;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Ο Φιλελληνισμός</h1>
+  <p>Κεφάλαιο 14 · Κάρτες Εξάσκησης</p>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+<div class="counter" id="counter">Κάρτα 1 από 20</div>
+
+<div class="card-container" id="cardContainer" onclick="flipCard()">
+  <div class="card-inner" id="cardInner">
+    <div class="card-face card-front">
+      <div class="label">Ερώτηση</div>
+      <div class="question" id="questionText"></div>
+    </div>
+    <div class="card-face card-back">
+      <div class="label">Απάντηση</div>
+      <div class="answer" id="answerText"></div>
+    </div>
+  </div>
+</div>
+
+<p class="hint">Πάτα στην κάρτα για να δεις την απάντηση</p>
+
+<div class="btn-row">
+  <button class="btn btn-prev" onclick="prevCard()">← Προηγούμενη</button>
+  <button class="btn btn-next" onclick="nextCard()">Επόμενη →</button>
+  <button class="btn btn-shuffle" onclick="shuffleCards()">🔀 Ανακάτεμα</button>
+  <button class="btn btn-reset" onclick="resetProgress()">↺ Επανεκκίνηση</button>
+</div>
+
+<div class="score-section" id="knowSection" style="display:none;">
+  <p style="color:#555; font-size:0.9rem;">Το ήξερες;</p>
+  <div class="know-btns">
+    <button class="btn btn-know" onclick="markKnown(true)">✓ Το ήξερα</button>
+    <button class="btn btn-dontknow" onclick="markKnown(false)">✗ Δεν το ήξερα</button>
+  </div>
+</div>
+
+<div class="score-display" id="scoreDisplay"></div>
+
+<footer>© myspiderwebsite | Christina Papadimitriou</footer>
+
+<script>
+const cards = [
+  {
+    q: "Ποιοι ονομάζονταν Φιλέλληνες;",
+    a: "Φιλέλληνες ήταν οι ξένοι (Ευρωπαίοι και Αμερικανοί) που εμπνεύστηκαν από την Επανάσταση του 1821 και υποστήριξαν τον αγώνα των Ελλήνων με διάφορους τρόπους."
+  },
+  {
+    q: "Πότε έφτασαν οι πρώτοι Φιλέλληνες στην Ελλάδα;",
+    a: "Οι πρώτοι Φιλέλληνες έφτασαν στην Ελλάδα το 1821, με έξοδα του Δημητρίου Υψηλάντη."
+  },
+  {
+    q: "Πότε δημιουργήθηκε το πρώτο Τάγμα Φιλελλήνων;",
+    a: "Το πρώτο Τάγμα Φιλελλήνων συγκροτήθηκε τον Μάιο του 1822."
+  },
+  {
+    q: "Σε ποια μάχη συμμετείχε το Τάγμα Φιλελλήνων και πότε;",
+    a: "Το Τάγμα Φιλελλήνων συμμετείχε στη Μάχη της Πέτας (κοντά στην Άρτα) στις 4 Ιουλίου 1822, όπου διαλύθηκε με μεγάλες απώλειες."
+  },
+  {
+    q: "Ποιος ήταν ο πιο διάσημος Φιλέλληνας και τι απέγινε;",
+    a: "Ο λόρδος Μπάιρον, Άγγλος ποιητής. Πέθανε στο Μεσολόγγι στις 19 Απριλίου 1824, σε ηλικία 36 ετών."
+  },
+  {
+    q: "Από ποιες χώρες κυρίως προέρχονταν οι Φιλέλληνες εθελοντές;",
+    a: "Κυρίως από Γερμανία, Γαλλία, Ιταλία, Πολωνία, Ελβετία και Αγγλία. Περισσότεροι από 1.200 Ευρωπαίοι πολέμησαν ενεργά."
+  },
+  {
+    q: "Τι ήταν οι Φιλελληνικές Επιτροπές (Κομιτάτα);",
+    a: "Ήταν οργανώσεις που δημιουργήθηκαν σε μεγάλες ευρωπαϊκές πόλεις (κυρίως Ελβετία, Γερμανία) για να συλλέγουν χρήματα, τρόφιμα και πολεμοφόδια για τους Έλληνες."
+  },
+  {
+    q: "Πού πρωτοδημιουργήθηκαν οι Φιλελληνικές Επιτροπές;",
+    a: "Οι πρώτες Φιλελληνικές Επιτροπές δημιουργήθηκαν στην Ελβετία και τη Γερμανία ήδη από το 1821."
+  },
+  {
+    q: "Ποιος ήταν ο Ιταλός Φιλέλληνας Σανταρόζα;",
+    a: "Ο κόμης Σανταρόζα ήταν Ιταλός αριστοκράτης και στρατιωτικός που, μετά την αποτυχία της επανάστασης στο Πεδεμόντιο, ήρθε να πολεμήσει στην Ελλάδα."
+  },
+  {
+    q: "Πώς βοήθησαν οι Φιλέλληνες που δεν ήρθαν στην Ελλάδα;",
+    a: "Μέσα από δημοσιεύσεις σε εφημερίδες, έντυπα, καλλιτεχνικά έργα και συνδρομές, ασκώντας ηθική και πολιτική πίεση υπέρ της Ελλάδας."
+  },
+  {
+    q: "Ποιοι «τύποι» ανθρώπων συμπεριλαμβάνονταν στους Φιλέλληνες;",
+    a: "Ρομαντικοί ιδεαλιστές, φοιτητές, άνεργοι πρώην στρατιωτικοί, διωκόμενοι πολιτικοί, έμποροι, τραπεζίτες και μέλη εκπαιδευτικών ή θρησκευτικών ιδρυμάτων."
+  },
+  {
+    q: "Ποιος Γάλλος ζωγράφος δημιούργησε φιλελληνικά έργα;",
+    a: "Ο Ευγένιος Ντελακρουά, ο οποίος ζωγράφισε τη «Σφαγή της Χίου» (1824), ένα από τα πιο συγκλονιστικά φιλελληνικά έργα τέχνης."
+  },
+  {
+    q: "Ποιος Γάλλος συγγραφέας ήταν γνωστός Φιλέλληνας;",
+    a: "Ο Βίκτωρ Ουγκώ. Επίσης ο Σατωμπριάν, πολιτικός και λογοτέχνης, υπερασπιζόταν δημόσια τον ελληνικό αγώνα."
+  },
+  {
+    q: "Πώς ανταποκρίθηκε η Αμερική στην Ελληνική Επανάσταση;",
+    a: "Φιλελληνικές Επιτροπές σε αμερικανικές πόλεις συγκέντρωναν ανθρωπιστική βοήθεια (τρόφιμα, φάρμακα). Ο πρόεδρος Μονρόε εξέφρασε συμπάθεια το 1822."
+  },
+  {
+    q: "Ποιος ήταν ο Σάμιουελ Χάου;",
+    a: "Αμερικανός γιατρός που ήρθε στην Ελλάδα και ίδρυσε νοσοκομείο για τους τραυματίες του Αγώνα."
+  },
+  {
+    q: "Ποια ήταν η ουσιαστικότερη συνεισφορά του Φιλελληνισμού στην Επανάσταση;",
+    a: "Η διεθνοποίηση του ελληνικού ζητήματος: η κοινή γνώμη της Ευρώπης στράφηκε υπέρ της Ελλάδας, πιέζοντας τις κυβερνήσεις να επέμβουν."
+  },
+  {
+    q: "Τι σήμαινε ο θάνατος του Μπάιρον για τον Φιλελληνισμό;",
+    a: "Ο θάνατός του συγκλόνισε την Ευρώπη και ανανέωσε τα φιλελληνικά αισθήματα, φέρνοντας νέα κύματα αλληλεγγύης και πίεσης για διεθνή επέμβαση."
+  },
+  {
+    q: "Σε ποιες χώρες ιδρύθηκαν φιλελληνικές επιτροπές εκτός Ελβετίας και Γερμανίας;",
+    a: "Λίγο αργότερα ιδρύθηκαν επιτροπές και στη Γαλλία, την Αγγλία, το Βέλγιο και την Ολλανδία."
+  },
+  {
+    q: "Ποιος ο ρόλος των Φιλελληνικών Επιτροπών αρχικά;",
+    a: "Αρχικά ο κύριος στόχος ήταν η περίθαλψη Ελλήνων προσφύγων, ενώ στη συνέχεια επεκτάθηκαν στην αποστολή χρημάτων και πολεμοφοδίων."
+  },
+  {
+    q: "Τι εννοούμε με τον όρο «ανθρωπιστική βοήθεια» στο πλαίσιο του Φιλελληνισμού;",
+    a: "Βοήθεια σε τρόφιμα και υλικά αγαθά (όχι όπλα) που στάλθηκε στους Έλληνες αγωνιστές και πρόσφυγες, κυρίως από τις Αμερικανικές Φιλελληνικές Επιτροπές."
+  }
+];
+
+let currentIndex = 0;
+let isFlipped = false;
+let knownCount = 0;
+let unknownCount = 0;
+let answered = new Array(cards.length).fill(null);
+let order = [...Array(cards.length).keys()];
+
+function updateCard() {
+  const c = cards[order[currentIndex]];
+  document.getElementById('questionText').textContent = c.q;
+  document.getElementById('answerText').textContent = c.a;
+  const container = document.getElementById('cardContainer');
+  container.classList.remove('flipped');
+  isFlipped = false;
+  document.getElementById('knowSection').style.display = 'none';
+  updateCounter();
+  updateProgress();
+  updateScore();
+}
+
+function flipCard() {
+  const container = document.getElementById('cardContainer');
+  if (!isFlipped) {
+    container.classList.add('flipped');
+    isFlipped = true;
+    document.getElementById('knowSection').style.display = 'block';
+  } else {
+    container.classList.remove('flipped');
+    isFlipped = false;
+    document.getElementById('knowSection').style.display = 'none';
+  }
+}
+
+function nextCard() {
+  if (currentIndex < cards.length - 1) {
+    currentIndex++;
+    updateCard();
+  }
+}
+
+function prevCard() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    updateCard();
+  }
+}
+
+function shuffleCards() {
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  currentIndex = 0;
+  answered = new Array(cards.length).fill(null);
+  knownCount = 0;
+  unknownCount = 0;
+  updateCard();
+}
+
+function resetProgress() {
+  currentIndex = 0;
+  order = [...Array(cards.length).keys()];
+  answered = new Array(cards.length).fill(null);
+  knownCount = 0;
+  unknownCount = 0;
+  updateCard();
+}
+
+function markKnown(known) {
+  if (answered[currentIndex] === null) {
+    answered[currentIndex] = known;
+    if (known) knownCount++; else unknownCount++;
+  }
+  document.getElementById('knowSection').style.display = 'none';
+  updateScore();
+  setTimeout(() => {
+    if (currentIndex < cards.length - 1) {
+      currentIndex++;
+      updateCard();
+    }
+  }, 300);
+}
+
+function updateCounter() {
+  document.getElementById('counter').textContent = `Κάρτα ${currentIndex + 1} από ${cards.length}`;
+}
+
+function updateProgress() {
+  const pct = ((currentIndex + 1) / cards.length) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+function updateScore() {
+  const total = knownCount + unknownCount;
+  if (total === 0) { document.getElementById('scoreDisplay').textContent = ''; return; }
+  document.getElementById('scoreDisplay').innerHTML =
+    `Αποτέλεσμα: <span>${knownCount}</span> ✓ &nbsp;|&nbsp; <span>${unknownCount}</span> ✗ &nbsp;|&nbsp; ${total} από ${cards.length} απαντήθηκαν`;
+}
+
+updateCard();
+</script>
+</body>
+</html>

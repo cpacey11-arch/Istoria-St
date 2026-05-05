@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Κεφάλαιο 15 – Κουίζ</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#dff4ff 0%,#fff9e6 50%,#dff4ff 100%);min-height:100vh;color:#1e3a5f;padding:20px}
+header{text-align:center;padding:26px 20px 16px}
+header h1{font-family:'Quicksand',sans-serif;font-size:clamp(1.2rem,4vw,1.9rem);font-weight:700;color:#f06a3a;line-height:1.35}
+header p{font-size:.9rem;color:#5a8fa8;margin-top:6px}
+header::after{content:'';display:block;width:70px;height:4px;background:linear-gradient(90deg,#f06a3a,#f9c846);border-radius:2px;margin:12px auto 0}
+
+.prog-wrap{max-width:620px;margin:14px auto 0}
+.prog-bg{background:#fde8cd;border-radius:20px;height:10px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#f06a3a,#f9c846);border-radius:20px;transition:width .4s}
+.prog-txt{display:flex;justify-content:space-between;font-size:.78rem;color:#9abecc;margin-top:5px}
+
+.card{max-width:620px;margin:20px auto;background:#fff;border-radius:22px;padding:30px 26px;box-shadow:0 8px 28px rgba(58,174,216,.13);border:2px solid #fde8cd;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+.q-tag{display:inline-block;background:#f06a3a;color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.1em;padding:4px 12px;border-radius:20px;margin-bottom:14px;text-transform:uppercase}
+.q-text{font-family:'Quicksand',sans-serif;font-size:clamp(1rem,2.8vw,1.18rem);font-weight:700;line-height:1.55;margin-bottom:22px}
+
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:600;padding:13px 16px;border-radius:13px;border:2px solid #d9edf5;background:#f5fbfe;color:#1e3a5f;cursor:pointer;text-align:left;display:flex;align-items:flex-start;gap:10px;line-height:1.45;transition:all .18s}
+.opt:hover:not(:disabled){border-color:#3aaed8;background:#e8f7fd;transform:translateX(3px)}
+.opt:disabled{cursor:default}
+.opt-letter{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:50%;background:#d9edf5;color:#3aaed8;font-size:.78rem;font-weight:800;flex-shrink:0;transition:all .18s}
+.opt.correct{background:#e8faf4;border-color:#38c9a0;color:#1a7a56}
+.opt.correct .opt-letter{background:#38c9a0;color:#fff}
+.opt.wrong{background:#fef0ec;border-color:#f06a3a;color:#c0392b}
+.opt.wrong .opt-letter{background:#f06a3a;color:#fff}
+.opt.dimmed{opacity:.4}
+
+.feedback{margin-top:16px;padding:13px 17px;border-radius:13px;font-size:.92rem;font-weight:600;line-height:1.5;display:none}
+.feedback.show{display:block}
+.fb-ok{background:#e8faf4;border:2px solid #38c9a0;color:#1a7a56}
+.fb-bad{background:#fef0ec;border:2px solid #f06a3a;color:#c0392b}
+
+.next-wrap{text-align:center;margin-top:18px}
+.btn-next{font-family:'Nunito',sans-serif;font-weight:700;font-size:1rem;padding:12px 30px;background:linear-gradient(90deg,#f06a3a,#f9c846);color:#fff;border:none;border-radius:50px;cursor:pointer;display:none;transition:all .2s}
+.btn-next.show{display:inline-block}
+.btn-next:hover{transform:translateY(-2px);filter:brightness(1.07)}
+
+/* Results */
+.results{max-width:580px;margin:30px auto;background:#fff;border-radius:22px;padding:38px 28px;text-align:center;box-shadow:0 8px 28px rgba(58,174,216,.13);display:none}
+.results.show{display:block;animation:fadeUp .4s ease}
+.res-emoji{font-size:3.2rem;margin-bottom:12px}
+.results h2{font-family:'Quicksand',sans-serif;font-size:1.6rem;color:#f06a3a;margin-bottom:6px}
+.score-big{font-size:2.8rem;font-weight:900;color:#3aaed8;margin:10px 0 2px}
+.score-sub{font-size:.87rem;color:#8ab6c8;margin-bottom:16px}
+.grade-bg{background:#e0f3fb;border-radius:20px;height:13px;margin:12px 0 6px;overflow:hidden}
+.grade-fill{height:100%;background:linear-gradient(90deg,#3aaed8,#38c9a0);border-radius:20px;transition:width 1s ease}
+.msg-box{background:#f5fbfe;border:2px solid #c9e8f5;border-radius:13px;padding:13px 17px;font-size:.93rem;color:#1e3a5f;margin:14px 0 20px;line-height:1.5}
+.review{text-align:left;margin-top:20px}
+.review h3{font-size:.95rem;font-weight:700;margin-bottom:10px;color:#1e3a5f}
+.rev-item{padding:11px 15px;border-radius:11px;margin-bottom:9px;font-size:.84rem;line-height:1.5;border-left:4px solid}
+.rev-item.ok{background:#e8faf4;border-color:#38c9a0}
+.rev-item.ko{background:#fef0ec;border-color:#f06a3a}
+.rev-q{font-weight:700;margin-bottom:3px}
+.rev-a{color:#5a8fa8}
+.btn-restart{font-family:'Nunito',sans-serif;font-weight:700;font-size:1rem;padding:12px 30px;background:#3aaed8;color:#fff;border:none;border-radius:50px;cursor:pointer;margin-top:20px;transition:all .2s}
+.btn-restart:hover{transform:translateY(-2px)}
+
+footer{text-align:center;font-size:.74rem;color:#8ab6c8;margin-top:28px;padding-bottom:18px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📝 Κουίζ – Κεφάλαιο 15<br>Η Παρέμβαση των Μεγάλων Δυνάμεων<br>και η Ναυμαχία του Ναυαρίνου</h1>
+  <p>10 ερωτήσεις πολλαπλής επιλογής · Ιστορία ΣΤ΄ Δημοτικού</p>
+</header>
+
+<div class="prog-wrap">
+  <div class="prog-bg"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <div class="prog-txt"><span id="progLeft">Ερώτηση 1 από 10</span><span id="progScore">Σκορ: 0</span></div>
+</div>
+
+<div class="card" id="quizCard">
+  <div class="q-tag" id="qTag">Ερώτηση 1</div>
+  <div class="q-text" id="qText"></div>
+  <div class="opts" id="optsArea"></div>
+  <div class="feedback" id="feedback"></div>
+  <div class="next-wrap"><button class="btn-next" id="btnNext" onclick="next()">Επόμενη →</button></div>
+</div>
+
+<div class="results" id="resultsDiv">
+  <div class="res-emoji" id="resEmoji"></div>
+  <h2>Αποτελέσματα</h2>
+  <div class="score-big" id="resBig"></div>
+  <div class="score-sub" id="resSub"></div>
+  <div class="grade-bg"><div class="grade-fill" id="gradeFill" style="width:0%"></div></div>
+  <div class="msg-box" id="resMsg"></div>
+  <div class="review" id="reviewDiv"></div>
+  <button class="btn-restart" onclick="restart()">↩ Ξανά από την αρχή</button>
+</div>
+
+<footer>© myspiderwebsite | Christina Papadimitriou</footer>
+
+<script>
+const Qs = [
+  {
+    q: "Πότε ιδρύθηκε η Ιερή Συμμαχία και ποιος ήταν ο βασικός σκοπός της;",
+    opts: ["Ιδρύθηκε το 1821 για να υποστηρίξει τις επαναστάσεις των λαών","Ιδρύθηκε το 1815 για να διατηρεί αμετάβλητη την ευρωπαϊκή τάξη και να καταπνίγει επαναστάσεις","Ιδρύθηκε το 1827 για να λύσει το Ελληνικό Ζήτημα","Ιδρύθηκε το 1823 για να υποστηρίξει την Ελληνική Επανάσταση"],
+    ans: 1,
+    exp: "Η Ιερή Συμμαχία ιδρύθηκε το 1815 μεταξύ Ρωσίας, Πρωσίας και Αυστρίας με στόχο να διατηρεί αμετάβλητη την ευρωπαϊκή τάξη που εγκαταστάθηκε μετά τους Ναπολεόντειους πολέμους."
+  },
+  {
+    q: "Ποια ήταν η αρχική στάση της Ιερής Συμμαχίας απέναντι στην Ελληνική Επανάσταση (1821-1822);",
+    opts: ["Υποστήριξε ενεργά τους Έλληνες αγωνιστές","Έμεινε ουδέτερη χωρίς να πάρει θέση","Ήταν αντίθετη στην Επανάσταση και την καταδίκασε στα συνέδριά της","Ζήτησε αμέσως τη δημιουργία ελληνικού κράτους"],
+    ans: 2,
+    exp: "Στα συνέδρια του 1821 και 1822, η Ιερή Συμμαχία πήρε αποφάσεις αντίθετες σε κάθε επαναστατική κίνηση. Η Ελληνική Επανάσταση θεωρήθηκε απειλή για την ευρωπαϊκή τάξη."
+  },
+  {
+    q: "Από ποιο έτος άρχισε η αγγλική πολιτική να γίνεται φιλική προς τους αγωνιζόμενους Έλληνες;",
+    opts: ["1821","1823","1826","1827"],
+    ans: 1,
+    exp: "Από το 1823 η αγγλική πολιτική έγινε πιο εύνοϊκή προς τους Έλληνες. Η αλλαγή αυτή επηρέασε και τη Ρωσία, που δεν ήθελε να αφήσει την πρωτοβουλία στους Άγγλους."
+  },
+  {
+    q: "Τι προέβλεπε η Συνθήκη του Λονδίνου (1827);",
+    opts: ["Τη διάλυση της Ιερής Συμμαχίας","Την κήρυξη πολέμου εναντίον της Οθωμανικής Αυτοκρατορίας","Ανακωχή μεταξύ Ελλάδας και Οθωμανικής Αυτοκρατορίας και διαπραγματεύσεις για αυτόνομο ελληνικό κράτος","Την πλήρη και άμεση ανεξαρτησία της Ελλάδας"],
+    ans: 2,
+    exp: "Η Συνθήκη του Λονδίνου (1827) ζητούσε ανακωχή και από τις δύο εμπόλεμες πλευρές και έναρξη διαπραγματεύσεων για τη δημιουργία αυτόνομου ελληνικού κράτους."
+  },
+  {
+    q: "Πώς αντέδρασε η Υψηλή Πύλη στη Συνθήκη του Λονδίνου;",
+    opts: ["Την αποδέχτηκε και σταμάτησε τις πολεμικές επιχειρήσεις","Την αρνήθηκε και απέρριψε τη μεσολάβηση των Μεγάλων Δυνάμεων","Ζήτησε νέες διαπραγματεύσεις","Αποδέχτηκε την αυτονομία αλλά όχι την ανεξαρτησία"],
+    ans: 1,
+    exp: "Η Υψηλή Πύλη, ενθαρρυμένη από τις στρατιωτικές επιτυχίες του Ιμπραήμ Πασά, αντέδρασε απορρίπτοντας τη μεσολάβηση και συνέχισε τις επιχειρήσεις."
+  },
+  {
+    q: "Ποιος ήταν ο ανώτατος διοικητής του συμμαχικού στόλου στη Ναυμαχία του Ναυαρίνου;",
+    opts: ["Ο Γάλλος αντιναύαρχος Ερρίκος ντε Ριγκνύ","Ο Ρώσος αντιναύαρχος Λόγγινος Χέυδεν","Ο Βρετανός ναύαρχος Εδουάρδος Κόδριγκτον","Ο Ιμπραήμ Πασάς"],
+    ans: 2,
+    exp: "Ο Βρετανός ναύαρχος Εδουάρδος Κόδριγκτον ήταν ο ανώτατος διοικητής των συμμαχικών δυνάμεων. Μαζί του ήταν ο Γάλλος ντε Ριγκνύ και ο Ρώσος Χέυδεν."
+  },
+  {
+    q: "Πού έγινε η Ναυμαχία του Ναυαρίνου;",
+    opts: ["Στον κόλπο της Κορίνθου","Στο Αιγαίο Πέλαγος, κοντά στη Χίο","Στον κόλπο του Ναυαρίνου (σημερινή Πύλος, Μεσσηνία)","Στο Ιόνιο Πέλαγος, κοντά στην Κέρκυρα"],
+    ans: 2,
+    exp: "Η Ναυμαχία έγινε στον κόλπο του Ναυαρίνου, που αντιστοιχεί στη σημερινή Πύλο της Μεσσηνίας, στη δυτική Πελοπόννησο."
+  },
+  {
+    q: "Ποιο ήταν το αποτέλεσμα της Ναυμαχίας του Ναυαρίνου (Οκτώβριος 1827);",
+    opts: ["Ο συμμαχικός στόλος ηττήθηκε και αποσύρθηκε","Η μάχη έληξε χωρίς νικητή — ήταν ισόπαλη","Ο τουρκοαιγυπτιακός στόλος καταστράφηκε σχεδόν ολοκληρωτικά","Οι δύο πλευρές υπέγραψαν ανακωχή χωρίς να πολεμήσουν"],
+    ans: 2,
+    exp: "Ο τουρκοαιγυπτιακός στόλος καταστράφηκε σχεδόν ολοκληρωτικά. Τα συμμαχικά πλοία δεν έχασαν κανένα σκάφος. Ήταν αποφασιστική νίκη των Μεγάλων Δυνάμεων."
+  },
+  {
+    q: "Τι εννοεί ο Μακρυγιάννης με τη φράση «Είμαστε εις το εμείς»;",
+    opts: ["Ότι μόνο οι στρατιώτες έχουν υποχρέωση να αγωνίζονται","Ότι η επιτυχία του αγώνα απαιτεί συλλογική προσπάθεια — να λένε όλοι «εμείς» και όχι «εγώ»","Ότι η Ελλάδα πρέπει να ζητήσει βοήθεια μόνο από τους Ρώσους","Ότι οι ξένοι φιλέλληνες είναι μέρος της ελληνικής κοινότητας"],
+    ans: 1,
+    exp: "Ο Μακρυγιάννης εννοεί ότι ο αγώνας είναι συλλογική υπόθεση — πλούσιοι και φτωχοί, μορφωμένοι και αμόρφωτοι πρέπει να αγωνίζονται μαζί, με το «εμείς» να υπερισχύει του «εγώ»."
+  },
+  {
+    q: "Πότε αναγνωρίστηκε επίσημα η Ελλάδα ως ανεξάρτητο κράτος από τις Μεγάλες Δυνάμεις;",
+    opts: ["1821","1825","1827","1830"],
+    ans: 3,
+    exp: "Η Ελλάδα αναγνωρίστηκε επίσημα ως ανεξάρτητο κράτος το 1830, έπειτα από χρόνια διαπραγματεύσεων και με καθοριστική συμβολή της Ναυμαχίας του Ναυαρίνου."
+  }
+];
+
+let cur = 0, score = 0, answered = [];
+const letters = ['Α','Β','Γ','Δ'];
+
+function render() {
+  const q = Qs[cur];
+  document.getElementById('qTag').textContent = 'Ερώτηση ' + (cur+1);
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('progLeft').textContent = 'Ερώτηση ' + (cur+1) + ' από 10';
+  document.getElementById('progScore').textContent = 'Σκορ: ' + score;
+  document.getElementById('progFill').style.width = (cur/10*100) + '%';
+
+  const area = document.getElementById('optsArea');
+  area.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = '<span class="opt-letter">' + letters[i] + '</span><span>' + o + '</span>';
+    btn.onclick = () => pick(i);
+    area.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('btnNext').className = 'btn-next';
+}
+
+function pick(i) {
+  const q = Qs[cur];
+  const btns = document.querySelectorAll('.opt');
+  btns.forEach(b => b.disabled = true);
+
+  const isOk = i === q.ans;
+  if (isOk) score++;
+
+  btns.forEach((b, idx) => {
+    if (idx === q.ans) b.classList.add('correct');
+    else if (idx === i && !isOk) b.classList.add('wrong');
+    else b.classList.add('dimmed');
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show ' + (isOk ? 'fb-ok' : 'fb-bad');
+  fb.textContent = (isOk ? '✅ Σωστά! ' : '❌ Λάθος. ') + q.exp;
+
+  answered.push({q: q.q, ok: isOk, correct: q.opts[q.ans], yours: q.opts[i]});
+
+  document.getElementById('progScore').textContent = 'Σκορ: ' + score;
+  document.getElementById('btnNext').className = 'btn-next show';
+}
+
+function next() {
+  cur++;
+  if (cur >= Qs.length) showResults();
+  else render();
+}
+
+function showResults() {
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('progFill').style.width = '100%';
+  const pct = Math.round(score/Qs.length*100);
+
+  const emojis = ['😔','😐','🙂','😊','🎉'];
+  document.getElementById('resEmoji').textContent = emojis[Math.floor(pct/25)];
+  document.getElementById('resBig').textContent = score + '/10';
+  document.getElementById('resSub').textContent = pct + '% σωστές απαντήσεις';
+
+  setTimeout(() => {
+    document.getElementById('gradeFill').style.width = pct + '%';
+  }, 200);
+
+  const msgs = [
+    [0,39,'Μην απογοητεύεσαι! Ξαναδιάβασε το κεφάλαιο και δοκίμασε ξανά. 💪'],
+    [40,59,'Καλή αρχή! Με λίγη επανάληψη θα τα πας ακόμα καλύτερα.'],
+    [60,79,'Πολύ καλά! Γνωρίζεις καλά το κεφάλαιο. Λίγη ακόμα εξάσκηση για τέλεια!'],
+    [80,100,'Εξαιρετικά! Γνωρίζεις πολύ καλά την παρέμβαση των Μεγάλων Δυνάμεων και τη Ναυμαχία του Ναυαρίνου! 🏆']
+  ];
+  const msg = msgs.find(m => pct >= m[0] && pct <= m[1]);
+  document.getElementById('resMsg').textContent = msg[2];
+
+  const rev = document.getElementById('reviewDiv');
+  rev.innerHTML = '<h3>Ανασκόπηση απαντήσεων:</h3>';
+  answered.forEach((a, i) => {
+    const d = document.createElement('div');
+    d.className = 'rev-item ' + (a.ok ? 'ok' : 'ko');
+    d.innerHTML = '<div class="rev-q">' + (i+1) + '. ' + a.q + '</div>' +
+      '<div class="rev-a">' + (a.ok ? '✅ ' : '❌ Σωστό: ') + (a.ok ? a.correct : a.correct) + '</div>';
+    rev.appendChild(d);
+  });
+
+  document.getElementById('resultsDiv').className = 'results show';
+}
+
+function restart() {
+  cur = 0; score = 0; answered = [];
+  document.getElementById('quizCard').style.display = 'block';
+  document.getElementById('resultsDiv').className = 'results';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

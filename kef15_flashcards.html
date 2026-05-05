@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Κεφάλαιο 15 – Κάρτες Εξάσκησης</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #3aaed8;
+    --sunny: #f9c846;
+    --coral: #f06a3a;
+    --mint: #38c9a0;
+    --lavender: #a78bfa;
+    --white: #ffffff;
+    --light-bg: #eef8ff;
+    --text: #1e3a5f;
+    --card-shadow: 0 8px 32px rgba(58,174,216,0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #dff4ff 0%, #fff9e6 50%, #dff4ff 100%);
+    min-height: 100vh;
+    color: var(--text);
+    padding: 20px;
+  }
+
+  /* ── Header ── */
+  header {
+    text-align: center;
+    padding: 28px 20px 18px;
+    position: relative;
+  }
+  header::after {
+    content: '';
+    display: block;
+    width: 80px; height: 4px;
+    background: linear-gradient(90deg, var(--sky), var(--mint));
+    border-radius: 2px;
+    margin: 12px auto 0;
+  }
+  header h1 {
+    font-family: 'Quicksand', sans-serif;
+    font-size: clamp(1.3rem, 4vw, 2rem);
+    font-weight: 700;
+    color: var(--sky);
+    line-height: 1.3;
+  }
+  header p {
+    font-size: 0.95rem;
+    color: #5a8fa8;
+    margin-top: 6px;
+  }
+
+  /* ── Progress ── */
+  .progress-bar-wrap {
+    max-width: 600px;
+    margin: 16px auto 0;
+    background: #c9e8f5;
+    border-radius: 20px;
+    height: 10px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sky), var(--mint));
+    border-radius: 20px;
+    transition: width 0.4s ease;
+  }
+  .progress-label {
+    text-align: center;
+    font-size: 0.82rem;
+    color: #5a8fa8;
+    margin-top: 5px;
+  }
+
+  /* ── Card Area ── */
+  .card-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 320px;
+    margin: 24px auto;
+    max-width: 640px;
+    perspective: 1200px;
+  }
+
+  .card-wrapper {
+    width: 100%;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .card {
+    width: 100%;
+    min-height: 260px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(.4,0,.2,1);
+    border-radius: 22px;
+  }
+  .card.flipped { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute;
+    width: 100%;
+    min-height: 260px;
+    border-radius: 22px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 28px;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+  }
+
+  .card-front {
+    background: var(--white);
+    border: 3px solid var(--sky);
+  }
+  .card-back {
+    background: linear-gradient(135deg, var(--sky) 0%, var(--mint) 100%);
+    color: white;
+    transform: rotateY(180deg);
+    border: 3px solid var(--mint);
+  }
+
+  .card-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .card-front .card-label {
+    background: var(--sky);
+    color: white;
+  }
+  .card-back .card-label {
+    background: rgba(255,255,255,0.25);
+    color: white;
+  }
+
+  .card-num {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #a0c8dc;
+  }
+  .card-back .card-num { color: rgba(255,255,255,0.55); }
+
+  .card-front .question {
+    font-family: 'Quicksand', sans-serif;
+    font-size: clamp(1.05rem, 3vw, 1.3rem);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .card-back .answer {
+    font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+    font-weight: 600;
+    line-height: 1.6;
+    color: white;
+  }
+  .flip-hint {
+    font-size: 0.75rem;
+    color: #a0c8dc;
+    margin-top: 14px;
+  }
+  .card-back .flip-hint { color: rgba(255,255,255,0.65); }
+
+  /* ── Controls ── */
+  .controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin: 0 auto 10px;
+    max-width: 600px;
+  }
+
+  .btn {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    padding: 11px 24px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .btn:hover { transform: translateY(-2px); filter: brightness(1.07); }
+  .btn:active { transform: translateY(0); }
+
+  .btn-prev { background: var(--white); color: var(--sky); border: 2px solid var(--sky); }
+  .btn-next { background: var(--sky); color: white; }
+  .btn-flip { background: var(--coral); color: white; }
+  .btn-shuffle { background: var(--sunny); color: #7a5a00; border: none; }
+  .btn-restart { background: var(--mint); color: white; }
+
+  /* ── Stars / Score ── */
+  .score-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 6px 0 18px;
+    flex-wrap: wrap;
+  }
+  .score-btn {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .score-btn:hover { transform: scale(1.07); }
+  .btn-know { background: #d4f7ea; color: #1a7a56; }
+  .btn-unsure { background: #fff3cd; color: #7a5a00; }
+  .btn-dontknow { background: #fde8e4; color: #c0392b; }
+
+  /* ── Stats ── */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.83rem;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 20px;
+  }
+  .stat-know { background: #d4f7ea; color: #1a7a56; }
+  .stat-unsure { background: #fff3cd; color: #7a5a00; }
+  .stat-dontknow { background: #fde8e4; color: #c0392b; }
+  .stat-dot { width: 9px; height: 9px; border-radius: 50%; }
+  .dot-know { background: #38c9a0; }
+  .dot-unsure { background: #f9c846; }
+  .dot-dontknow { background: #f06a3a; }
+
+  /* ── Image ── */
+  .card-image {
+    max-width: 100%;
+    max-height: 120px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    object-fit: cover;
+    border: 2px solid rgba(58,174,216,0.2);
+  }
+
+  /* ── Completed screen ── */
+  .completed {
+    text-align: center;
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 40px 30px;
+    background: white;
+    border-radius: 22px;
+    box-shadow: var(--card-shadow);
+    display: none;
+  }
+  .completed.show { display: block; }
+  .completed h2 { font-size: 1.6rem; color: var(--sky); margin-bottom: 12px; }
+  .completed p { color: #5a8fa8; margin-bottom: 20px; }
+  .big-emoji { font-size: 3rem; margin-bottom: 12px; }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #8ab6c8;
+    margin-top: 30px;
+    padding-bottom: 20px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚓ Κεφάλαιο 15<br>Η Παρέμβαση των Μεγάλων Δυνάμεων<br>και η Ναυμαχία του Ναυαρίνου</h1>
+  <p>Κάρτες Εξάσκησης · Ιστορία ΣΤ΄ Δημοτικού</p>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="progressFill" style="width:5%"></div>
+</div>
+<div class="progress-label" id="progressLabel">Κάρτα 1 από 20</div>
+
+<div class="card-area">
+  <div class="card-wrapper" onclick="flipCard()">
+    <div class="card" id="mainCard">
+      <div class="card-face card-front">
+        <span class="card-num" id="cardNum">1/20</span>
+        <span class="card-label">Ερώτηση</span>
+        <div class="question" id="questionText">Φόρτωση...</div>
+        <div class="flip-hint">👆 Πάτα για να δεις την απάντηση</div>
+      </div>
+      <div class="card-face card-back">
+        <span class="card-num" id="cardNumBack">1/20</span>
+        <span class="card-label">Απάντηση</span>
+        <div class="answer" id="answerText">Φόρτωση...</div>
+        <div class="flip-hint">👆 Πάτα για να γυρίσεις</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn btn-prev" onclick="prevCard()">← Πίσω</button>
+  <button class="btn btn-flip" onclick="flipCard()">🔄 Γύρισε</button>
+  <button class="btn btn-next" onclick="nextCard()">Επόμενη →</button>
+</div>
+
+<div class="score-row" id="scoreRow">
+  <button class="score-btn btn-know" onclick="markCard('know')">✅ Το ξέρω</button>
+  <button class="score-btn btn-unsure" onclick="markCard('unsure')">🤔 Μισό-μισό</button>
+  <button class="score-btn btn-dontknow" onclick="markCard('dontknow')">❌ Δεν το ξέρω</button>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-pill stat-know"><span class="stat-dot dot-know"></span>Το ξέρω: <span id="cntKnow">0</span></div>
+  <div class="stat-pill stat-unsure"><span class="stat-dot dot-unsure"></span>Μισό-μισό: <span id="cntUnsure">0</span></div>
+  <div class="stat-pill stat-dontknow"><span class="stat-dot dot-dontknow"></span>Δεν ξέρω: <span id="cntDontknow">0</span></div>
+</div>
+
+<div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:30px;">
+  <button class="btn btn-shuffle" onclick="shuffleCards()">🔀 Ανακάτεμα</button>
+  <button class="btn btn-restart" onclick="restartCards()">↩ Επανεκκίνηση</button>
+</div>
+
+<div class="completed" id="completedScreen">
+  <div class="big-emoji">🎉</div>
+  <h2>Μπράβο! Τελείωσες!</h2>
+  <p>Έχεις δει και τις 20 κάρτες!</p>
+  <div class="stats-bar" style="margin-bottom:20px;">
+    <div class="stat-pill stat-know"><span class="stat-dot dot-know"></span>Ξέρω: <span id="finalKnow">0</span></div>
+    <div class="stat-pill stat-unsure"><span class="stat-dot dot-unsure"></span>Μισό: <span id="finalUnsure">0</span></div>
+    <div class="stat-pill stat-dontknow"><span class="stat-dot dot-dontknow"></span>Δεν ξέρω: <span id="finalDontknow">0</span></div>
+  </div>
+  <button class="btn btn-restart" onclick="restartCards()" style="margin:0 auto;">↩ Ξανά από την αρχή</button>
+</div>
+
+<footer>© myspiderwebsite | Christina Papadimitriou</footer>
+
+<script>
+const cards = [
+  {
+    q: "Τι ήταν η Ιερή Συμμαχία και πότε ιδρύθηκε;",
+    a: "Η Ιερή Συμμαχία ιδρύθηκε το 1815 μεταξύ Ρωσίας, Πρωσίας και Αυστρίας (αργότερα και Αγγλίας, Γαλλίας). Στόχος της ήταν να καταπνίγει κάθε επαναστατική κίνηση και να διατηρεί αναλλοίωτη την τάξη στην Ευρώπη."
+  },
+  {
+    q: "Ποια ήταν η αρχική στάση των Μεγάλων Δυνάμεων απέναντι στην Ελληνική Επανάσταση (1821-1822);",
+    a: "Ήταν εχθρική. Στα συνέδριά τους το 1821 και 1822, οι Μεγάλες Δυνάμεις πήραν αποφάσεις που ήταν αντίθετες σε οποιαδήποτε επαναστατική κίνηση, άρα και στην Ελληνική Επανάσταση."
+  },
+  {
+    q: "Πότε άρχισε να αλλάζει η στάση της Αγγλίας απέναντι στους αγωνιζόμενους Έλληνες;",
+    a: "Από το 1823. Τότε η αγγλική πολιτική έγινε πιο φιλική προς τους Έλληνες, και αυτό επηρέασε και τη Ρωσία, που δεν ήθελε να μείνει εκτός του ελληνικού ζητήματος."
+  },
+  {
+    q: "Τι ήταν το «Ελληνικό Ζήτημα»;",
+    a: "Ήταν η συζήτηση και όλες οι διπλωματικές ενέργειες των Μεγάλων Δυνάμεων σχετικά με το μέλλον της αγωνιζόμενης Ελλάδας: αν θα αποκτούσε ανεξαρτησία ή αυτονομία και υπό ποιες συνθήκες."
+  },
+  {
+    q: "Τι προέβλεπε η Συνθήκη του Λονδίνου (1827);",
+    a: "Η Αγγλία, η Γαλλία και η Ρωσία υπέγραψαν συνθήκη που ζητούσε ανακωχή μεταξύ Ελλάδας και Οθωμανικής Αυτοκρατορίας και έναρξη διαπραγματεύσεων για τη δημιουργία αυτόνομου ελληνικού κράτους."
+  },
+  {
+    q: "Πώς αντέδρασε η Υψηλή Πύλη (Οθωμανική κυβέρνηση) στη Συνθήκη του Λονδίνου;",
+    a: "Αρνήθηκε να δεχτεί τη μεσολάβηση και απέρριψε τη Συνθήκη. Αντίθετα, ενθαρρυμένη από τις στρατιωτικές της επιτυχίες, συνέχισε τις επιχειρήσεις εναντίον των Ελλήνων."
+  },
+  {
+    q: "Ποιοι ήταν οι τρεις ναύαρχοι που ηγήθηκαν του συμμαχικού στόλου στη Ναυμαχία του Ναυαρίνου;",
+    a: "Ο Βρετανός ναύαρχος Εδουάρδος Κόδριγκτον (ανώτατος διοικητής), ο Γάλλος αντιναύαρχος Ερρίκος ντε Ριγκνύ και ο Ρώσος αντιναύαρχος Λόγγινος Χέυδεν."
+  },
+  {
+    q: "Πού έγινε η Ναυμαχία του Ναυαρίνου και πότε;",
+    a: "Έγινε στον κόλπο του Ναυαρίνου (σημερινή Πύλος, στη Μεσσηνία της Πελοποννήσου) τον Οκτώβριο του 1827."
+  },
+  {
+    q: "Ποιοι αποτελούσαν τον εχθρικό στόλο στη Ναυμαχία του Ναυαρίνου;",
+    a: "Ο τουρκοαιγυπτιακός στόλος, δηλαδή πλοία της Οθωμανικής Αυτοκρατορίας και του Ιμπραήμ Πασά (αιγυπτιακές δυνάμεις)."
+  },
+  {
+    q: "Ποιο ήταν το αποτέλεσμα της Ναυμαχίας του Ναυαρίνου;",
+    a: "Ο τουρκοαιγυπτιακός στόλος καταστράφηκε σχεδόν ολοκληρωτικά. Τα συμμαχικά (αγγλικά, γαλλικά, ρωσικά) πλοία δεν έχασαν κανένα σκάφος."
+  },
+  {
+    q: "Ποια ήταν η στρατιωτική σημασία της Ναυμαχίας του Ναυαρίνου για την Ελλάδα;",
+    a: "Ο Ιμπραήμ Πασάς έχασε τη ναυτική του δύναμη. Χωρίς ναυτική κάλυψη, δεν μπορούσε να ανεφοδιαστεί, και οι αιγυπτιακές δυνάμεις στην Πελοπόννησο αποκόπηκαν. Αυτό επιτάχυνε αποφασιστικά τις εξελίξεις."
+  },
+  {
+    q: "Γιατί η Αγγλία άλλαξε στάση και άρχισε να υποστηρίζει τους Έλληνες;",
+    a: "Η Αγγλία αντιλαμβανόταν ότι ένα σταθερό ελληνικό κράτος ήταν καλύτερο για τα εμπορικά της συμφέροντα. Επίσης, η ισχυρή φιλελληνική κοινή γνώμη στην Ευρώπη άσκησε πίεση στις κυβερνήσεις."
+  },
+  {
+    q: "Τι ήταν ο «φιλελληνισμός» στην Ευρώπη;",
+    a: "Ήταν το ευρωπαϊκό κίνημα συμπαράστασης στον αγώνα των Ελλήνων. Πολλοί Ευρωπαίοι ποιητές, φιλόσοφοι και πολίτες θαύμαζαν τον ελληνικό πολιτισμό και υποστήριζαν την ανεξαρτησία της Ελλάδας."
+  },
+  {
+    q: "Ποιος ήταν ο λόγος που η Ρωσία άλλαξε επίσης στάση υπέρ των Ελλήνων;",
+    a: "Η Ρωσία δεν ήθελε να αφήσει στην Αγγλία την αποκλειστική επιρροή στα Βαλκάνια. Επίσης, συμπαθούσε τους ορθόδοξους Χριστιανούς Έλληνες που αγωνίζονταν εναντίον της Οθωμανικής Αυτοκρατορίας."
+  },
+  {
+    q: "Τι σημαίνει η λέξη «εμπόλεμος»;",
+    a: "Εμπόλεμος σημαίνει αυτός που εμπλέκεται σε πόλεμο. Στο κείμενο αναφέρεται στις δύο εμπόλεμες πλευρές: την Ελλάδα και την Οθωμανική Αυτοκρατορία."
+  },
+  {
+    q: "Ποια ήταν η μεγαλύτερη σημασία της Ναυμαχίας του Ναυαρίνου για τον δρόμο προς την ελευθερία;",
+    a: "Ήταν η επιβεβαίωση ότι οι Μεγάλες Δυνάμεις είχαν πλέον στραφεί ανοιχτά υπέρ της Ελλάδας, καθιστώντας την ελληνική ανεξαρτησία αναπόφευκτη και επιταχύνοντας τις διεθνείς εξελίξεις."
+  },
+  {
+    q: "Ποιος συνέγραψε τα «Απομνημονεύματα» που αναφέρονται στο κεφάλαιο;",
+    a: "Ο Μακρυγιάννης, ένας από τους σπουδαιότερους αγωνιστές της Ελληνικής Επανάστασης, που κατέγραψε τις εμπειρίες και τις σκέψεις του για τον αγώνα."
+  },
+  {
+    q: "Τι εννοεί ο Μακρυγιάννης με τη φράση «Είμαστε στο εμείς»;",
+    a: "Εννοεί ότι η ελευθερία και η επιτυχία του αγώνα απαιτούν συλλογική προσπάθεια — να λένε όλοι «εμείς» και όχι «εγώ», να αγωνίζονται όλοι μαζί, πλούσιοι και φτωχοί, μορφωμένοι και αμόρφωτοι."
+  },
+  {
+    q: "Τι συνέβη με τους πρόσφυγες κατά τη διάρκεια της Επανάστασης;",
+    a: "Χιλιάδες Έλληνες (αλλά και άλλοι κάτοικοι) εκτοπίστηκαν από τις εστίες τους, έγιναν πρόσφυγες, αναζητώντας ασφάλεια. Η προσφυγοποίηση ήταν μία από τις σκληρότερες συνέπειες των πολεμικών επιχειρήσεων."
+  },
+  {
+    q: "Πότε αναγνωρίστηκε επίσημα η Ελλάδα ως ανεξάρτητο κράτος;",
+    a: "Το 1830, μετά από αλλεπάλληλες διαπραγματεύσεις και διεθνή πίεση, η Ελλάδα αναγνωρίστηκε επίσημα ως ανεξάρτητο κράτος από τις Μεγάλες Δυνάμεις."
+  }
+];
+
+let order = [...Array(cards.length).keys()];
+let current = 0;
+let isFlipped = false;
+let scores = new Array(cards.length).fill(null);
+
+function updateCard() {
+  const idx = order[current];
+  document.getElementById('questionText').textContent = cards[idx].q;
+  document.getElementById('answerText').textContent = cards[idx].a;
+  const label = `${current + 1}/${cards.length}`;
+  document.getElementById('cardNum').textContent = label;
+  document.getElementById('cardNumBack').textContent = label;
+  document.getElementById('progressLabel').textContent = `Κάρτα ${current + 1} από ${cards.length}`;
+  const pct = Math.max(5, Math.round(((current + 1) / cards.length) * 100));
+  document.getElementById('progressFill').style.width = pct + '%';
+  if (isFlipped) {
+    const card = document.getElementById('mainCard');
+    card.classList.remove('flipped');
+    isFlipped = false;
+  }
+  updateStats();
+}
+
+function flipCard() {
+  const card = document.getElementById('mainCard');
+  isFlipped = !isFlipped;
+  card.classList.toggle('flipped', isFlipped);
+}
+
+function nextCard() {
+  if (current < cards.length - 1) {
+    current++;
+    updateCard();
+  } else {
+    showCompleted();
+  }
+}
+
+function prevCard() {
+  if (current > 0) {
+    current--;
+    updateCard();
+  }
+}
+
+function markCard(status) {
+  scores[order[current]] = status;
+  updateStats();
+  nextCard();
+}
+
+function updateStats() {
+  const know = scores.filter(s => s === 'know').length;
+  const unsure = scores.filter(s => s === 'unsure').length;
+  const dontknow = scores.filter(s => s === 'dontknow').length;
+  document.getElementById('cntKnow').textContent = know;
+  document.getElementById('cntUnsure').textContent = unsure;
+  document.getElementById('cntDontknow').textContent = dontknow;
+}
+
+function shuffleCards() {
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  current = 0;
+  scores = new Array(cards.length).fill(null);
+  document.getElementById('completedScreen').classList.remove('show');
+  updateCard();
+}
+
+function restartCards() {
+  order = [...Array(cards.length).keys()];
+  current = 0;
+  scores = new Array(cards.length).fill(null);
+  isFlipped = false;
+  document.getElementById('mainCard').classList.remove('flipped');
+  document.getElementById('completedScreen').classList.remove('show');
+  updateCard();
+}
+
+function showCompleted() {
+  const know = scores.filter(s => s === 'know').length;
+  const unsure = scores.filter(s => s === 'unsure').length;
+  const dontknow = scores.filter(s => s === 'dontknow').length;
+  document.getElementById('finalKnow').textContent = know;
+  document.getElementById('finalUnsure').textContent = unsure;
+  document.getElementById('finalDontknow').textContent = dontknow;
+  document.getElementById('completedScreen').classList.add('show');
+}
+
+updateCard();
+</script>
+</body>
+</html>

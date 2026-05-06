@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Εθνοσυνελεύσεις & Πολιτική Οργάνωση | Κάρτες & Κουίζ</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fraunces:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #0EA5E9; --sky-light: #E0F2FE; --sky-dark: #0369A1;
+    --sun: #FACC15; --sun-light: #FEF9C3; --sun-dark: #78350F;
+    --mint: #10B981; --mint-light: #D1FAE5; --mint-dark: #064E3B;
+    --rose: #F43F5E; --rose-light: #FFE4E6; --rose-dark: #881337;
+    --peach: #FB923C; --peach-light: #FFEDD5; --peach-dark: #7C2D12;
+    --lav: #8B5CF6; --lav-light: #EDE9FE; --lav-dark: #3B0764;
+    --bg: #F0F9FF;
+    --card-bg: #ffffff;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --border: #CBD5E1;
+    --radius: 18px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  header {
+    background: linear-gradient(135deg, #0EA5E9 0%, #6366F1 100%);
+    color: white;
+    padding: 32px 24px 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '🏛️';
+    position: absolute; top: -10px; left: 20px;
+    font-size: 80px; opacity: .12;
+  }
+  header::after {
+    content: '📜';
+    position: absolute; bottom: -15px; right: 20px;
+    font-size: 80px; opacity: .12;
+  }
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.9rem; font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  header p {
+    font-size: 0.95rem; opacity: .88;
+    font-weight: 600;
+  }
+
+  .tab-row {
+    display: flex; gap: 10px; justify-content: center;
+    padding: 20px 24px 0;
+  }
+  .tab-btn {
+    padding: 10px 28px;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: all .2s;
+    outline: none;
+  }
+  .tab-btn.fc-tab { background: var(--sky-light); color: var(--sky-dark); border-color: var(--sky); }
+  .tab-btn.fc-tab.active { background: var(--sky); color: white; }
+  .tab-btn.qz-tab { background: var(--peach-light); color: var(--peach-dark); border-color: var(--peach); }
+  .tab-btn.qz-tab.active { background: var(--peach); color: white; }
+
+  .section { display: none; padding: 24px 20px; max-width: 700px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* ── FLASHCARDS ── */
+  .fc-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .fc-counter {
+    background: var(--sky-light); color: var(--sky-dark);
+    padding: 5px 14px; border-radius: 999px;
+    font-weight: 700; font-size: 0.9rem;
+  }
+  .fc-hint { font-size: 0.82rem; color: var(--text-muted); font-style: italic; }
+
+  .flip-wrap {
+    perspective: 1000px; height: 220px; margin-bottom: 18px; cursor: pointer;
+  }
+  .flip-inner {
+    width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform .5s cubic-bezier(.4,0,.2,1);
+    position: relative;
+  }
+  .flip-inner.flipped { transform: rotateY(180deg); }
+  .flip-face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: var(--radius);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 20px 28px; text-align: center;
+    border: 2px solid transparent;
+  }
+  .flip-front {
+    background: white;
+    border-color: var(--sky);
+    box-shadow: 0 4px 20px rgba(14,165,233,.15);
+  }
+  .flip-back {
+    transform: rotateY(180deg);
+    border-color: var(--mint);
+    box-shadow: 0 4px 20px rgba(16,185,129,.15);
+  }
+  .flip-face .badge {
+    font-size: 0.72rem; font-weight: 800; letter-spacing: .09em;
+    text-transform: uppercase; padding: 3px 12px; border-radius: 999px;
+    margin-bottom: 10px;
+  }
+  .flip-front .badge { background: var(--sky-light); color: var(--sky-dark); }
+  .flip-back .badge { background: var(--mint-light); color: var(--mint-dark); }
+  .flip-face .fc-q { font-size: 1.05rem; font-weight: 700; line-height: 1.5; color: var(--text); }
+  .flip-back { background: linear-gradient(135deg, #F0FDF4, #E0F2FE); }
+  .flip-back .fc-a { font-size: 0.97rem; font-weight: 600; line-height: 1.6; color: var(--mint-dark); }
+
+  .nav-row {
+    display: flex; gap: 10px; justify-content: center; align-items: center;
+    margin-bottom: 12px;
+  }
+  .nav-btn {
+    padding: 10px 24px; border-radius: 999px; border: 2px solid var(--border);
+    background: white; color: var(--text); font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all .15s;
+  }
+  .nav-btn:hover { border-color: var(--sky); color: var(--sky-dark); }
+  .nav-btn:disabled { opacity: .4; cursor: default; }
+  .flip-btn {
+    padding: 10px 24px; border-radius: 999px;
+    background: linear-gradient(135deg, var(--sky), var(--lav));
+    color: white; border: none; font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem; font-weight: 700; cursor: pointer;
+    box-shadow: 0 3px 12px rgba(99,102,241,.25);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .flip-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(99,102,241,.3); }
+
+  .fc-dots {
+    display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .fc-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--border); transition: background .2s;
+  }
+  .fc-dot.seen { background: var(--sky); }
+  .fc-dot.current { background: var(--sun); transform: scale(1.3); }
+
+  /* category color accents */
+  .cat-a .flip-front { border-color: #F59E0B; box-shadow: 0 4px 20px rgba(245,158,11,.15); }
+  .cat-a .flip-front .badge { background: #FEF9C3; color: #78350F; }
+  .cat-b .flip-front { border-color: var(--lav); box-shadow: 0 4px 20px rgba(139,92,246,.15); }
+  .cat-b .flip-front .badge { background: var(--lav-light); color: var(--lav-dark); }
+  .cat-c .flip-front { border-color: var(--rose); box-shadow: 0 4px 20px rgba(244,63,94,.15); }
+  .cat-c .flip-front .badge { background: var(--rose-light); color: var(--rose-dark); }
+
+  /* ── QUIZ ── */
+  .quiz-progress-bar {
+    height: 8px; background: #E2E8F0; border-radius: 999px; margin-bottom: 20px; overflow: hidden;
+  }
+  .quiz-bar-fill {
+    height: 100%; background: linear-gradient(90deg, var(--peach), var(--rose));
+    border-radius: 999px; transition: width .4s ease;
+  }
+  .quiz-card {
+    background: white; border-radius: var(--radius);
+    border: 2px solid var(--peach);
+    padding: 24px 22px;
+    box-shadow: 0 4px 20px rgba(251,146,60,.12);
+    margin-bottom: 16px;
+  }
+  .quiz-qnum {
+    font-size: 0.75rem; font-weight: 800; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--peach-dark);
+    background: var(--peach-light); padding: 3px 12px; border-radius: 999px;
+    display: inline-block; margin-bottom: 12px;
+  }
+  .quiz-question { font-size: 1.05rem; font-weight: 700; line-height: 1.5; margin-bottom: 18px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-opt {
+    padding: 11px 16px; border-radius: 12px;
+    border: 2px solid var(--border); background: white;
+    font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 600;
+    text-align: left; cursor: pointer; transition: all .15s; color: var(--text);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--peach); background: var(--peach-light); }
+  .quiz-opt.correct { border-color: var(--mint) !important; background: var(--mint-light) !important; color: var(--mint-dark) !important; }
+  .quiz-opt.wrong { border-color: var(--rose) !important; background: var(--rose-light) !important; color: var(--rose-dark) !important; }
+  .quiz-opt:disabled { cursor: default; }
+
+  .quiz-feedback {
+    display: none; margin-top: 14px;
+    padding: 12px 16px; border-radius: 12px;
+    font-size: 0.9rem; font-weight: 600; line-height: 1.5;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: var(--mint-light); color: var(--mint-dark); border: 1.5px solid var(--mint); }
+  .quiz-feedback.no { background: var(--rose-light); color: var(--rose-dark); border: 1.5px solid var(--rose); }
+
+  .quiz-next-btn {
+    display: none; width: 100%;
+    padding: 12px; border-radius: 999px;
+    background: linear-gradient(135deg, var(--peach), var(--rose));
+    color: white; border: none; font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 800; cursor: pointer; margin-top: 16px;
+    box-shadow: 0 3px 14px rgba(251,146,60,.3);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .quiz-next-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(251,146,60,.4); }
+  .quiz-next-btn.show { display: block; }
+
+  .quiz-score-card {
+    display: none; text-align: center;
+    background: white; border-radius: var(--radius);
+    padding: 36px 24px; border: 2px solid var(--sun);
+    box-shadow: 0 4px 24px rgba(250,204,21,.2);
+  }
+  .quiz-score-card.show { display: block; }
+  .score-emoji { font-size: 3.5rem; margin-bottom: 12px; }
+  .score-num { font-size: 2.8rem; font-weight: 800; color: var(--sky-dark); }
+  .score-label { font-size: 1rem; color: var(--text-muted); margin-bottom: 20px; }
+  .score-msg { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 24px; }
+  .restart-btn {
+    padding: 12px 36px; border-radius: 999px;
+    background: linear-gradient(135deg, var(--sky), var(--lav));
+    color: white; border: none; font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 800; cursor: pointer;
+    box-shadow: 0 3px 14px rgba(14,165,233,.3);
+    transition: transform .15s;
+  }
+  .restart-btn:hover { transform: translateY(-1px); }
+
+  footer {
+    text-align: center; padding: 20px;
+    font-size: 0.78rem; color: var(--text-muted);
+    font-weight: 600; letter-spacing: .03em;
+  }
+
+  @keyframes pop {
+    0% { transform: scale(.92); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .pop { animation: pop .25s ease; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Εθνοσυνελεύσεις &amp; Πολιτική Οργάνωση</h1>
+  <p>ΣΤ΄ Δημοτικού · Ελληνική Επανάσταση 1821</p>
+</header>
+
+<div class="tab-row">
+  <button class="tab-btn fc-tab active" onclick="showTab('fc')">🃏 Κάρτες Εξάσκησης</button>
+  <button class="tab-btn qz-tab" onclick="showTab('qz')">✏️ Κουίζ</button>
+</div>
+
+<!-- FLASHCARDS -->
+<div class="section active" id="fc-section">
+  <div class="fc-topbar">
+    <span class="fc-counter" id="fc-counter">1 / 20</span>
+    <span class="fc-hint">👆 Πάτα την κάρτα για να δεις την απάντηση</span>
+  </div>
+
+  <div class="flip-wrap" id="flip-wrap" onclick="flipCard()">
+    <div class="flip-inner" id="flip-inner">
+      <div class="flip-face flip-front">
+        <span class="badge" id="fc-badge">Ερώτηση</span>
+        <p class="fc-q" id="fc-q"></p>
+      </div>
+      <div class="flip-face flip-back">
+        <span class="badge">Απάντηση</span>
+        <p class="fc-a" id="fc-a"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" id="fc-prev" onclick="fcNav(-1)">← Προηγούμενη</button>
+    <button class="flip-btn" onclick="flipCard()">🔄 Αναστροφή</button>
+    <button class="nav-btn" id="fc-next" onclick="fcNav(1)">Επόμενη →</button>
+  </div>
+
+  <div class="fc-dots" id="fc-dots"></div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="qz-section">
+  <div class="quiz-progress-bar"><div class="quiz-bar-fill" id="qz-bar"></div></div>
+
+  <div id="qz-card" class="quiz-card pop">
+    <span class="quiz-qnum" id="qz-num">Ερώτηση 1 / 15</span>
+    <p class="quiz-question" id="qz-q"></p>
+    <div class="quiz-options" id="qz-opts"></div>
+    <div class="quiz-feedback" id="qz-feedback"></div>
+    <button class="quiz-next-btn" id="qz-next" onclick="qzNext()">Επόμενη ερώτηση →</button>
+  </div>
+
+  <div class="quiz-score-card" id="qz-score">
+    <div class="score-emoji" id="sc-emoji"></div>
+    <div class="score-num" id="sc-num"></div>
+    <div class="score-label" id="sc-label"></div>
+    <div class="score-msg" id="sc-msg"></div>
+    <button class="restart-btn" onclick="qzRestart()">🔁 Ξανά από την αρχή</button>
+  </div>
+</div>
+
+<footer>© myspiderwebsite | Christina Papadimitriou</footer>
+
+<script>
+// ── FLASHCARD DATA ──
+const cards = [
+  // Κατηγορία Α: Τοπικοί Οργανισμοί
+  { cat:'a', badge:'Τοπικοί Οργανισμοί',
+    q:'Τι ήταν οι «Τοπικοί Οργανισμοί» που συγκροτήθηκαν με την έναρξη της Επανάστασης;',
+    a:'Τοπικές κυβερνήσεις για την οργάνωση του Αγώνα σε επίπεδο περιοχής.' },
+  { cat:'a', badge:'Τοπικοί Οργανισμοί',
+    q:'Ποιος ήταν ο τοπικός οργανισμός της Πελοποννήσου;',
+    a:'Η Πελοποννησιακή Γερουσία.' },
+  { cat:'a', badge:'Τοπικοί Οργανισμοί',
+    q:'Ποιος ήταν ο τοπικός οργανισμός της Δυτικής Στερεάς Ελλάδας;',
+    a:'Η Γερουσία (στη Δυτική Στερεά).' },
+  { cat:'a', badge:'Τοπικοί Οργανισμοί',
+    q:'Ποιος ήταν ο τοπικός οργανισμός της Ανατολικής Στερεάς Ελλάδας;',
+    a:'Ο Άρειος Πάγος.' },
+  { cat:'a', badge:'Τοπικοί Οργανισμοί',
+    q:'Γιατί κρίθηκε απαραίτητη η ύπαρξη κεντρικής πολιτικής διοίκησης;',
+    a:'Γιατί οι τοπικές κυβερνήσεις αδυνατούσαν να συντονίσουν συνολικά την Επανάσταση.' },
+
+  // Κατηγορία Β: Α΄ Εθνοσυνέλευση
+  { cat:'b', badge:'Α΄ Εθνοσυνέλευση',
+    q:'Πού και πότε πραγματοποιήθηκε η Α΄ Εθνοσυνέλευση;',
+    a:'Στην Επίδαυρο, τον Δεκέμβριο του 1821.' },
+  { cat:'b', badge:'Α΄ Εθνοσυνέλευση',
+    q:'Τι ψηφίστηκε για πρώτη φορά στην Α΄ Εθνοσυνέλευση;',
+    a:'Το πρώτο Σύνταγμα της Επανάστασης.' },
+  { cat:'b', badge:'Α΄ Εθνοσυνέλευση',
+    q:'Με ποιο άλλο όνομα είναι γνωστό το πρώτο Σύνταγμα της Επανάστασης;',
+    a:'«Προσωρινό Πολίτευμα της Ελλάδος».' },
+  { cat:'b', badge:'Α΄ Εθνοσυνέλευση',
+    q:'Σε ποια πρότυπα βασίστηκε το Προσωρινό Πολίτευμα της Ελλάδος;',
+    a:'Σε αμερικανικά και γαλλικά πρότυπα.' },
+  { cat:'b', badge:'Α΄ Εθνοσυνέλευση',
+    q:'Ποια δύο σώματα σχηματίστηκαν για την άσκηση της κεντρικής διοίκησης;',
+    a:'Το Βουλευτικό και το Εκτελεστικό.' },
+  { cat:'b', badge:'Α΄ Εθνοσυνέλευση',
+    q:'Ποια πόλη ορίστηκε πρωτεύουσα του νέου κράτους στην Α΄ Εθνοσυνέλευση;',
+    a:'Η Κόρινθος.' },
+
+  // Κατηγορία Γ: Β΄ & Γ΄ Εθνοσυνέλευση
+  { cat:'c', badge:'Β΄ & Γ΄ Εθνοσυνέλευση',
+    q:'Πού συνήλθε η Β΄ Εθνοσυνέλευση και ποια χρονιά;',
+    a:'Στο Άστρος της Αρκαδίας, το 1823.' },
+  { cat:'c', badge:'Β΄ & Γ΄ Εθνοσυνέλευση',
+    q:'Τι αποφασίστηκε στη Β΄ Εθνοσυνέλευση για τα τοπικά κέντρα εξουσίας;',
+    a:'Να καταργηθούν, προκειμένου να ενισχυθεί η κεντρική διοίκηση.' },
+  { cat:'c', badge:'Β΄ & Γ΄ Εθνοσυνέλευση',
+    q:'Ποια τρία πολιτικά κόμματα δημιουργήθηκαν από τις διαμάχες προκρίτων και στρατιωτικών;',
+    a:'Το Αγγλικό, το Γαλλικό και το Ρωσικό.' },
+  { cat:'c', badge:'Β΄ & Γ΄ Εθνοσυνέλευση',
+    q:'Ποιος υποστήριζε το Αγγλικό κόμμα;',
+    a:'Ο Αλέξανδρος Μαυροκορδάτος και οι Υδραίοι.' },
+  { cat:'c', badge:'Β΄ & Γ΄ Εθνοσυνέλευση',
+    q:'Ποιος ηγείτο του Γαλλικού κόμματος;',
+    a:'Ο Ηπειρώτης γιατρός Ιωάννης Κωλέττης.' },
+  { cat:'c', badge:'Β΄ & Γ΄ Εθνοσυνέλευση',
+    q:'Πού και πότε συγκλήθηκε η Γ΄ Εθνοσυνέλευση;',
+    a:'Στην Τροιζήνα, το 1827.' },
+  { cat:'c', badge:'Β΄ & Γ΄ Εθνοσυνέλευση',
+    q:'Ποια πόλη ορίστηκε πρωτεύουσα του ελληνικού κράτους στη Γ΄ Εθνοσυνέλευση;',
+    a:'Το Ναύπλιο.' },
+  { cat:'c', badge:'Β΄ & Γ΄ Εθνοσυνέλευση',
+    q:'Ποιος εκλέχθηκε Κυβερνήτης της Ελλάδας στη Γ΄ Εθνοσυνέλευση;',
+    a:'Ο Ιωάννης Καποδίστριας.' },
+  { cat:'c', badge:'Β΄ & Γ΄ Εθνοσυνέλευση',
+    q:'Ποιοι Άγγλοι αξιωματικοί ορίστηκαν αρχηγοί των ελληνικών ενόπλων δυνάμεων;',
+    a:'Ο σερ Ρίτσαρντ Τσωρτς (στην ξηρά) και ο λόρδος Τόμας Κόχραν (στη θάλασσα).' },
+];
+
+// ── QUIZ DATA ──
+const questions = [
+  { q:'Πού πραγματοποιήθηκε η Α΄ Εθνοσυνέλευση;',
+    opts:['Στο Ναύπλιο','Στην Επίδαυρο','Στο Άστρος','Στην Τροιζήνα'], ans:1,
+    exp:'Η Α΄ Εθνοσυνέλευση πραγματοποιήθηκε στην Επίδαυρο, τον Δεκέμβριο του 1821.' },
+  { q:'Πώς λεγόταν το πρώτο Σύνταγμα της Επανάστασης;',
+    opts:['Νόμος της Επιδαύρου','Σύνταγμα του Άστρους','Προσωρινό Πολίτευμα της Ελλάδος','Χάρτης της Ελευθερίας'], ans:2,
+    exp:'Το πρώτο Σύνταγμα ήταν γνωστό ως «Προσωρινό Πολίτευμα της Ελλάδος».' },
+  { q:'Σε ποια πρότυπα βασίστηκε το «Προσωρινό Πολίτευμα της Ελλάδος»;',
+    opts:['Αγγλικά και ρωσικά','Αμερικανικά και γαλλικά','Οθωμανικά και βυζαντινά','Ιταλικά και ισπανικά'], ans:1,
+    exp:'Βασίστηκε σε αμερικανικά και γαλλικά πρότυπα.' },
+  { q:'Ποια ήταν η πρωτεύουσα του νέου κράτους μετά την Α΄ Εθνοσυνέλευση;',
+    opts:['Αθήνα','Ναύπλιο','Πάτρα','Κόρινθος'], ans:3,
+    exp:'Η Κόρινθος ορίστηκε πρωτεύουσα του νέου κράτους.' },
+  { q:'Ποια δύο σώματα δημιουργήθηκαν για την άσκηση της κεντρικής διοίκησης;',
+    opts:['Βουλή και Γερουσία','Βουλευτικό και Εκτελεστικό','Άρειος Πάγος και Γερουσία','Κοινοβούλιο και Σύγκλητος'], ans:1,
+    exp:'Σχηματίστηκαν το Βουλευτικό και το Εκτελεστικό.' },
+  { q:'Πού συνήλθε η Β΄ Εθνοσυνέλευση;',
+    opts:['Στην Επίδαυρο','Στην Τροιζήνα','Στο Άστρος της Αρκαδίας','Στο Ναύπλιο'], ans:2,
+    exp:'Η Β΄ Εθνοσυνέλευση συνήλθε στο Άστρος της Αρκαδίας, το 1823.' },
+  { q:'Πότε έγινε η Γ΄ Εθνοσυνέλευση;',
+    opts:['1821','1823','1825','1827'], ans:3,
+    exp:'Η Γ΄ Εθνοσυνέλευση συνήλθε στην Τροιζήνα το 1827.' },
+  { q:'Ποιος εκλέχθηκε Κυβερνήτης της Ελλάδας το 1827;',
+    opts:['Αλέξανδρος Μαυροκορδάτος','Ιωάννης Κωλέττης','Ιωάννης Καποδίστριας','Θεόδωρος Κολοκοτρώνης'], ans:2,
+    exp:'Ο Ιωάννης Καποδίστριας εκλέχθηκε Κυβερνήτης της Ελλάδας στη Γ΄ Εθνοσυνέλευση.' },
+  { q:'Ποιος ήταν ο τοπικός οργανισμός της Ανατολικής Στερεάς Ελλάδας;',
+    opts:['Πελοποννησιακή Γερουσία','Γερουσία','Άρειος Πάγος','Εκτελεστικό'], ans:2,
+    exp:'Ο Άρειος Πάγος ήταν ο τοπικός οργανισμός της Ανατολικής Στερεάς Ελλάδας.' },
+  { q:'Ποιος υποστήριζε το Αγγλικό κόμμα;',
+    opts:['Ο Κολοκοτρώνης και οι Πελοποννήσιοι','Ο Μαυροκορδάτος και οι Υδραίοι','Ο Κωλέττης και οι Ρουμελιώτες','Ο Καποδίστριας και οι νησιώτες'], ans:1,
+    exp:'Το Αγγλικό κόμμα υποστήριζαν ο Αλέξανδρος Μαυροκορδάτος και οι Υδραίοι.' },
+  { q:'Ποιος ηγείτο του Γαλλικού κόμματος;',
+    opts:['Θεόδωρος Κολοκοτρώνης','Ιωάννης Καποδίστριας','Ιωάννης Κωλέττης','Αλέξανδρος Μαυροκορδάτος'], ans:2,
+    exp:'Ο Ιωάννης Κωλέττης, Ηπειρώτης γιατρός, ηγείτο του Γαλλικού κόμματος.' },
+  { q:'Ποια πόλη ορίστηκε πρωτεύουσα στη Γ΄ Εθνοσυνέλευση;',
+    opts:['Κόρινθος','Αθήνα','Πάτρα','Ναύπλιο'], ans:3,
+    exp:'Η Γ΄ Εθνοσυνέλευση στην Τροιζήνα όρισε το Ναύπλιο πρωτεύουσα.' },
+  { q:'Γιατί χρειάστηκε κεντρική πολιτική διοίκηση;',
+    opts:['Για να αντικατασταθούν οι στρατηγοί','Γιατί οι τοπικές κυβερνήσεις δεν μπορούσαν να συντονιστούν','Για να εισπραχθούν φόροι','Για να αναγνωριστεί η Ελλάδα από την Ευρώπη'], ans:1,
+    exp:'Οι τοπικές κυβερνήσεις αδυνατούσαν να συντονίσουν συνολικά την Επανάσταση.' },
+  { q:'Ποιος ορίστηκε αρχηγός στη θάλασσα για τις ελληνικές ένοπλες δυνάμεις;',
+    opts:['Σερ Ρίτσαρντ Τσωρτς','Ιωάννης Καποδίστριας','Λόρδος Τόμας Κόχραν','Αλέξανδρος Μαυροκορδάτος'], ans:2,
+    exp:'Ο λόρδος Τόμας Κόχραν ορίστηκε αρχηγός στη θάλασσα.' },
+  { q:'Πόσες Εθνοσυνελεύσεις έγιναν κατά τα πρώτα χρόνια της Επανάστασης (μέχρι 1827);',
+    opts:['Δύο','Τρεις','Τέσσερις','Μία'], ans:1,
+    exp:'Πραγματοποιήθηκαν τρεις Εθνοσυνελεύσεις: Επίδαυρος (1821), Άστρος (1823), Τροιζήνα (1827).' },
+];
+
+// ── FLASHCARD LOGIC ──
+let fcIndex = 0;
+let fcFlipped = false;
+
+function buildDots() {
+  const el = document.getElementById('fc-dots');
+  el.innerHTML = '';
+  cards.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'fc-dot' + (i === 0 ? ' current' : '');
+    d.id = 'dot-' + i;
+    el.appendChild(d);
+  });
+}
+
+function renderCard() {
+  const c = cards[fcIndex];
+  fcFlipped = false;
+  const inner = document.getElementById('flip-inner');
+  inner.classList.remove('flipped');
+  document.getElementById('fc-q').textContent = c.q;
+  document.getElementById('fc-a').textContent = c.a;
+  document.getElementById('fc-badge').textContent = c.badge;
+
+  // category color
+  const wrap = document.getElementById('flip-wrap');
+  wrap.className = 'flip-wrap cat-' + c.cat;
+
+  document.getElementById('fc-counter').textContent = (fcIndex+1) + ' / ' + cards.length;
+  document.getElementById('fc-prev').disabled = fcIndex === 0;
+  document.getElementById('fc-next').disabled = fcIndex === cards.length - 1;
+
+  // dots
+  cards.forEach((_, i) => {
+    const d = document.getElementById('dot-' + i);
+    d.className = 'fc-dot' + (i < fcIndex ? ' seen' : '') + (i === fcIndex ? ' current' : '');
+  });
+}
+
+function flipCard() {
+  fcFlipped = !fcFlipped;
+  document.getElementById('flip-inner').classList.toggle('flipped', fcFlipped);
+}
+
+function fcNav(dir) {
+  fcIndex = Math.max(0, Math.min(cards.length - 1, fcIndex + dir));
+  renderCard();
+}
+
+buildDots();
+renderCard();
+
+// ── QUIZ LOGIC ──
+let qzIndex = 0;
+let qzScore = 0;
+let qzAnswered = false;
+let qzOrder = [];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function qzStart() {
+  qzOrder = shuffle(questions.map((_,i)=>i)).slice(0, 15);
+  qzIndex = 0; qzScore = 0;
+  document.getElementById('qz-score').classList.remove('show');
+  document.getElementById('qz-card').style.display = 'block';
+  qzRender();
+}
+
+function qzRender() {
+  qzAnswered = false;
+  const qi = qzOrder[qzIndex];
+  const q = questions[qi];
+  const total = qzOrder.length;
+
+  document.getElementById('qz-num').textContent = 'Ερώτηση ' + (qzIndex+1) + ' / ' + total;
+  document.getElementById('qz-q').textContent = q.q;
+  document.getElementById('qz-bar').style.width = (qzIndex / total * 100) + '%';
+
+  const fb = document.getElementById('qz-feedback');
+  fb.textContent = ''; fb.className = 'quiz-feedback';
+  document.getElementById('qz-next').classList.remove('show');
+
+  const optsEl = document.getElementById('qz-opts');
+  optsEl.innerHTML = '';
+  q.opts.forEach((opt, oi) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = opt;
+    btn.onclick = () => qzAnswer(oi, btn);
+    optsEl.appendChild(btn);
+  });
+}
+
+function qzAnswer(chosen, btn) {
+  if (qzAnswered) return;
+  qzAnswered = true;
+  const qi = qzOrder[qzIndex];
+  const q = questions[qi];
+  const correct = q.ans;
+  const fb = document.getElementById('qz-feedback');
+  const allBtns = document.querySelectorAll('#qz-opts .quiz-opt');
+
+  allBtns.forEach(b => b.disabled = true);
+  allBtns[correct].classList.add('correct');
+
+  if (chosen === correct) {
+    qzScore++;
+    btn.classList.add('correct');
+    fb.textContent = '✅ Σωστά! ' + q.exp;
+    fb.className = 'quiz-feedback show ok';
+  } else {
+    btn.classList.add('wrong');
+    fb.textContent = '❌ Λάθος. ' + q.exp;
+    fb.className = 'quiz-feedback show no';
+  }
+  document.getElementById('qz-next').classList.add('show');
+  document.getElementById('qz-next').textContent =
+    qzIndex < qzOrder.length - 1 ? 'Επόμενη ερώτηση →' : 'Δες το αποτέλεσμα 🎉';
+}
+
+function qzNext() {
+  qzIndex++;
+  if (qzIndex >= qzOrder.length) {
+    qzShowScore();
+  } else {
+    document.getElementById('qz-card').classList.remove('pop');
+    void document.getElementById('qz-card').offsetWidth;
+    document.getElementById('qz-card').classList.add('pop');
+    qzRender();
+  }
+}
+
+function qzShowScore() {
+  document.getElementById('qz-card').style.display = 'none';
+  const sc = document.getElementById('qz-score');
+  sc.classList.add('show');
+  const pct = qzScore / qzOrder.length;
+  let emoji = '🌟', msg = 'Εξαιρετική δουλειά!';
+  if (pct < .4) { emoji = '📖'; msg = 'Διάβασε ξανά τις κάρτες και προσπάθησε!'; }
+  else if (pct < .7) { emoji = '👏'; msg = 'Καλή προσπάθεια! Μπορείς ακόμα καλύτερα!'; }
+  document.getElementById('sc-emoji').textContent = emoji;
+  document.getElementById('sc-num').textContent = qzScore + ' / ' + qzOrder.length;
+  document.getElementById('sc-label').textContent = 'σωστές απαντήσεις';
+  document.getElementById('sc-msg').textContent = msg;
+  document.getElementById('qz-bar').style.width = '100%';
+}
+
+function qzRestart() {
+  document.getElementById('qz-score').classList.remove('show');
+  qzStart();
+}
+
+qzStart();
+
+// ── TAB SWITCH ──
+function showTab(tab) {
+  document.getElementById('fc-section').classList.toggle('active', tab === 'fc');
+  document.getElementById('qz-section').classList.toggle('active', tab === 'qz');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.' + tab + '-tab').classList.add('active');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Φυλλάδιο Εξάσκησης – Κεφ. 15 & 16</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1a73c8;
+    --blue-light: #e8f2fc;
+    --orange: #f97316;
+    --orange-light: #fff7ed;
+    --green: #16a34a;
+    --green-light: #e8f7ee;
+    --red: #dc2626;
+    --red-light: #fef0f0;
+    --purple: #7c3aed;
+    --purple-light: #f3f0ff;
+    --yellow: #d97706;
+    --yellow-light: #fffbeb;
+    --teal: #0d9488;
+    --teal-light: #e6fafa;
+    --gray: #374151;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #f0f6ff;
+    color: var(--gray);
+    padding: 20px;
+  }
+
+  .page {
+    max-width: 820px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    padding: 36px 40px 30px;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #f97316 0%, #c2410c 100%);
+    border-radius: 16px;
+    padding: 22px 28px;
+    color: white;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: "✏️";
+    position: absolute; right: 28px; top: 16px;
+    font-size: 52px; opacity: 0.22;
+  }
+  .header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.9rem;
+    margin-bottom: 4px;
+  }
+  .header p {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    font-weight: 600;
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.22);
+    border-radius: 20px;
+    padding: 3px 14px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-top: 8px;
+    border: 1px solid rgba(255,255,255,0.35);
+  }
+
+  /* CHAPTER BANNER */
+  .chapter-banner {
+    background: linear-gradient(90deg, var(--blue) 0%, #2563eb 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 11px 20px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    margin: 22px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .chapter-banner.orange {
+    background: linear-gradient(90deg, var(--orange) 0%, #ea580c 100%);
+  }
+
+  /* QUESTION CARD */
+  .q-card {
+    border-radius: 14px;
+    margin-bottom: 18px;
+    overflow: hidden;
+    border: 2px solid transparent;
+  }
+  .q-card.blue   { border-color: #bfdbfe; }
+  .q-card.green  { border-color: #bbf7d0; }
+  .q-card.purple { border-color: #ddd6fe; }
+  .q-card.teal   { border-color: #99f6e4; }
+  .q-card.orange { border-color: #fed7aa; }
+  .q-card.red    { border-color: #fecaca; }
+
+  .q-header {
+    padding: 12px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .q-card.blue   .q-header { background: var(--blue-light); }
+  .q-card.green  .q-header { background: var(--green-light); }
+  .q-card.purple .q-header { background: var(--purple-light); }
+  .q-card.teal   .q-header { background: var(--teal-light); }
+  .q-card.orange .q-header { background: var(--orange-light); }
+  .q-card.red    .q-header { background: var(--red-light); }
+
+  .q-num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.15rem;
+    color: white;
+    border-radius: 8px;
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .q-card.blue   .q-num { background: var(--blue); }
+  .q-card.green  .q-num { background: var(--green); }
+  .q-card.purple .q-num { background: var(--purple); }
+  .q-card.teal   .q-num { background: var(--teal); }
+  .q-card.orange .q-num { background: var(--orange); }
+  .q-card.red    .q-num { background: var(--red); }
+
+  .q-text {
+    font-size: 0.97rem;
+    font-weight: 700;
+    padding-top: 3px;
+    line-height: 1.5;
+  }
+
+  .q-type {
+    margin-left: auto;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 2px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    align-self: flex-start;
+    flex-shrink: 0;
+  }
+  .q-card.blue   .q-type { background: #bfdbfe; color: #1e40af; }
+  .q-card.green  .q-type { background: #bbf7d0; color: #14532d; }
+  .q-card.purple .q-type { background: #ddd6fe; color: #4c1d95; }
+  .q-card.teal   .q-type { background: #99f6e4; color: #134e4a; }
+  .q-card.orange .q-type { background: #fed7aa; color: #7c2d12; }
+  .q-card.red    .q-type { background: #fecaca; color: #7f1d1d; }
+
+  /* ANSWER TOGGLE */
+  .answer-toggle {
+    padding: 0;
+    cursor: pointer;
+    width: 100%;
+    border: none;
+    background: none;
+    text-align: left;
+    font-family: 'Nunito', sans-serif;
+  }
+  .answer-toggle:focus { outline: none; }
+
+  .toggle-bar {
+    padding: 9px 18px;
+    font-size: 0.83rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    border-top: 1.5px dashed #e2e8f0;
+    transition: background 0.15s;
+  }
+  .q-card.blue   .toggle-bar { color: var(--blue); }
+  .q-card.green  .toggle-bar { color: var(--green); }
+  .q-card.purple .toggle-bar { color: var(--purple); }
+  .q-card.teal   .toggle-bar { color: var(--teal); }
+  .q-card.orange .toggle-bar { color: var(--orange); }
+  .q-card.red    .toggle-bar { color: var(--red); }
+  .toggle-bar:hover { background: #f8fafc; }
+
+  .arrow { transition: transform 0.2s; display: inline-block; }
+  .arrow.open { transform: rotate(90deg); }
+
+  .answer-body {
+    display: none;
+    padding: 12px 18px 14px;
+    background: #fafcff;
+    border-top: 1.5px solid #e8f0fc;
+  }
+  .answer-body.visible { display: block; }
+
+  .answer-label {
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .q-card.blue   .answer-label { color: var(--blue); }
+  .q-card.green  .answer-label { color: var(--green); }
+  .q-card.purple .answer-label { color: var(--purple); }
+  .q-card.teal   .answer-label { color: var(--teal); }
+  .q-card.orange .answer-label { color: var(--orange); }
+  .q-card.red    .answer-label { color: var(--red); }
+
+  .answer-text {
+    font-size: 0.93rem;
+    font-weight: 600;
+    line-height: 1.6;
+    color: #374151;
+  }
+  .answer-text strong { font-weight: 800; color: #111; }
+  .answer-text ul { list-style: none; padding: 0; margin-top: 4px; }
+  .answer-text ul li {
+    padding: 3px 0 3px 18px;
+    position: relative;
+  }
+  .answer-text ul li::before {
+    content: "✓";
+    position: absolute; left: 0;
+    font-weight: 800;
+    font-size: 0.85rem;
+  }
+  .q-card.blue   .answer-text ul li::before { color: var(--blue); }
+  .q-card.green  .answer-text ul li::before { color: var(--green); }
+  .q-card.purple .answer-text ul li::before { color: var(--purple); }
+  .q-card.teal   .answer-text ul li::before { color: var(--teal); }
+  .q-card.orange .answer-text ul li::before { color: var(--orange); }
+  .q-card.red    .answer-text ul li::before { color: var(--red); }
+
+  /* MCQ options */
+  .mcq-options { margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .mcq-opt {
+    background: white;
+    border: 2px solid #e0e8f0;
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .mcq-opt:hover { background: #f0f6ff; }
+  .mcq-opt.correct { background: #dcfce7; border-color: var(--green); color: var(--green); }
+  .mcq-opt.wrong   { background: #fee2e2; border-color: var(--red); color: var(--red); }
+
+  /* MATCHING */
+  .match-table { width: 100%; border-collapse: separate; border-spacing: 0 5px; margin-top: 6px; }
+  .match-table td { padding: 6px 10px; background: white; border: 1.5px solid #e0e8f0; font-size: 0.88rem; font-weight: 700; }
+  .match-table td:first-child { border-radius: 8px 0 0 8px; width: 38%; }
+  .match-table td:last-child  { border-radius: 0 8px 8px 0; }
+  .match-arrow { color: #94a3b8; font-size: 1.1rem; text-align: center; border-left: none !important; border-right: none !important; }
+
+  /* DIVIDER */
+  hr.divider {
+    border: none;
+    border-top: 2px dashed #d1e8ff;
+    margin: 26px 0;
+  }
+
+  /* SHOW ALL BUTTON */
+  .show-all-btn {
+    display: block;
+    margin: 0 auto 24px;
+    background: linear-gradient(135deg, #1a73c8, #0e4f9a);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 11px 28px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .show-all-btn:hover { opacity: 0.88; }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 2px solid #e0eeff;
+    font-size: 0.82rem;
+    color: #7a9bc0;
+    font-weight: 700;
+  }
+
+  @media print {
+    body { background: white; padding: 0; }
+    .page { box-shadow: none; padding: 20px; }
+    .show-all-btn, .toggle-bar { display: none; }
+    .answer-body { display: block !important; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>✏️ Φυλλάδιο Εξάσκησης</h1>
+    <p>Κεφάλαιο 15 & Κεφάλαιο 16 — Ιστορία Στ΄ Δημοτικού</p>
+    <span class="badge">Πάτα «Απάντηση» για να δεις κάθε λύση</span>
+  </div>
+
+  <button class="show-all-btn" onclick="toggleAll()">👁️ Εμφάνιση / Απόκρυψη όλων των απαντήσεων</button>
+
+  <!-- ====== ΚΕΦ 15 ====== -->
+  <div class="chapter-banner">⚓ Κεφάλαιο 15 — Η παρέμβαση των Μεγάλων Δυνάμεων & Ναυμαχία Ναβαρίνου</div>
+
+  <!-- Q1 -->
+  <div class="q-card blue">
+    <div class="q-header">
+      <div class="q-num">1</div>
+      <div class="q-text">Ποια ήταν η αρχική στάση των Μεγάλων Δυνάμεων απέναντι στην Ελληνική Επανάσταση;</div>
+      <span class="q-type">Κατανόηση</span>
+    </div>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">
+      <div class="toggle-bar"><span class="arrow">▶</span> Απάντηση</div>
+    </button>
+    <div class="answer-body">
+      <div class="answer-label">✅ Απάντηση</div>
+      <div class="answer-text">Ήταν <strong>αντίθετες</strong>. Η Ιερά Συμμαχία (1815) καταδίκαζε κάθε επανάσταση, κι έτσι αρχικά κατεδίκαζαν και την ελληνική.</div>
+    </div>
+  </div>
+
+  <!-- Q2 MCQ -->
+  <div class="q-card green">
+    <div class="q-header">
+      <div class="q-num">2</div>
+      <div class="q-text">Πότε άρχισε να αλλάζει η αγγλική πολιτική προς τους Έλληνες;</div>
+      <span class="q-type">Πολλαπλής</span>
+    </div>
+    <div class="q-header" style="padding-top:0; padding-bottom:14px; background:var(--green-light);">
+      <div style="width:30px; flex-shrink:0;"></div>
+      <div class="mcq-options" style="flex:1;">
+        <div class="mcq-opt" onclick="pickMCQ(this,'wrong')">α) 1815</div>
+        <div class="mcq-opt" onclick="pickMCQ(this,'wrong')">β) 1821</div>
+        <div class="mcq-opt" onclick="pickMCQ(this,'correct')">γ) 1823</div>
+        <div class="mcq-opt" onclick="pickMCQ(this,'wrong')">δ) 1830</div>
+      </div>
+    </div>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">
+      <div class="toggle-bar"><span class="arrow">▶</span> Απάντηση</div>
+    </button>
+    <div class="answer-body">
+      <div class="answer-label">✅ Απάντηση</div>
+      <div class="answer-text">Σωστό είναι το <strong>γ) 1823</strong>. Από το τρίτο χρόνο της Επανάστασης η Αγγλία έγινε πιο φιλική προς τους αγωνιζόμενους Έλληνες.</div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-card purple">
+    <div class="q-header">
+      <div class="q-num">3</div>
+      <div class="q-text">Τι αποφάσισαν οι τρεις Μεγάλες Δυνάμεις με τη Συνθήκη του Λονδίνου (1827);</div>
+      <span class="q-type">Κατανόηση</span>
+    </div>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">
+      <div class="toggle-bar"><span class="arrow">▶</span> Απάντηση</div>
+    </button>
+    <div class="answer-body">
+      <div class="answer-label">✅ Απάντηση</div>
+      <div class="answer-text">Αποφάσισαν να <strong>μεσολαβήσουν από κοινού</strong> και κάλεσαν τις δύο εμπόλεμες πλευρές να κάνουν εκεχειρία και να αρχίσουν διαπραγματεύσεις για τη δημιουργία αυτόνομου ελληνικού κράτους.</div>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-card teal">
+    <div class="q-header">
+      <div class="q-num">4</div>
+      <div class="q-text">Περίγραψε σύντομα τη Ναυμαχία του Ναβαρίνου: πότε έγινε, ποιοι συμμετείχαν, ποιο ήταν το αποτέλεσμα;</div>
+      <span class="q-type">Σύνθεση</span>
+    </div>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">
+      <div class="toggle-bar"><span class="arrow">▶</span> Απάντηση</div>
+    </button>
+    <div class="answer-body">
+      <div class="answer-label">✅ Απάντηση</div>
+      <div class="answer-text">
+        <ul>
+          <li><strong>Πότε:</strong> Οκτώβριος 1827, στην Πύλο.</li>
+          <li><strong>Ποιοι:</strong> Αγγλο-γαλλο-ρωσικά πλοία εναντίον του τουρκοαιγυπτιακού στόλου.</li>
+          <li><strong>Αποτέλεσμα:</strong> Ολοκληρωτική καταστροφή του τουρκοαιγυπτιακού στόλου — αποφασιστική νίκη που επιτάχυνε την απελευθέρωση.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q5 Matching -->
+  <div class="q-card orange">
+    <div class="q-header">
+      <div class="q-num">5</div>
+      <div class="q-text">Αντιστοίχισε τον ναύαρχο με τη χώρα του:</div>
+      <span class="q-type">Αντιστοίχιση</span>
+    </div>
+    <div style="padding: 10px 18px 14px; background: var(--orange-light);">
+      <table class="match-table">
+        <tr>
+          <td>Κόδριγκτον</td>
+          <td class="match-arrow">→</td>
+          <td>___________</td>
+        </tr>
+        <tr>
+          <td>Δεριγνύ</td>
+          <td class="match-arrow">→</td>
+          <td>___________</td>
+        </tr>
+        <tr>
+          <td>Χέυδεν</td>
+          <td class="match-arrow">→</td>
+          <td>___________</td>
+        </tr>
+      </table>
+    </div>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">
+      <div class="toggle-bar"><span class="arrow">▶</span> Απάντηση</div>
+    </button>
+    <div class="answer-body">
+      <div class="answer-label">✅ Απάντηση</div>
+      <div class="answer-text">
+        <ul>
+          <li><strong>Κόδριγκτον</strong> → Αγγλία</li>
+          <li><strong>Δεριγνύ</strong> → Γαλλία</li>
+          <li><strong>Χέυδεν</strong> → Ρωσία</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ====== ΚΕΦ 16 ====== -->
+  <div class="chapter-banner orange">🏛️ Κεφάλαιο 16 — Οι Εθνοσυνελεύσεις και η πολιτική οργάνωση του Αγώνα</div>
+
+  <!-- Q6 -->
+  <div class="q-card blue">
+    <div class="q-header">
+      <div class="q-num">6</div>
+      <div class="q-text">Γιατί κρίθηκε απαραίτητη η δημιουργία κεντρικής διοίκησης κατά την Επανάσταση;</div>
+      <span class="q-type">Κατανόηση</span>
+    </div>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">
+      <div class="toggle-bar"><span class="arrow">▶</span> Απάντηση</div>
+    </button>
+    <div class="answer-body">
+      <div class="answer-label">✅ Απάντηση</div>
+      <div class="answer-text">Γιατί οι τοπικές κυβερνήσεις <strong>δεν μπορούσαν να συντονίσουν</strong> τον αγώνα συνολικά. Χρειαζόταν μία ενιαία κεντρική αρχή.</div>
+    </div>
+  </div>
+
+  <!-- Q7 MCQ -->
+  <div class="q-card green">
+    <div class="q-header">
+      <div class="q-num">7</div>
+      <div class="q-text">Πού πραγματοποιήθηκε η Α΄ Εθνοσυνέλευση;</div>
+      <span class="q-type">Πολλαπλής</span>
+    </div>
+    <div class="q-header" style="padding-top:0; padding-bottom:14px; background:var(--green-light);">
+      <div style="width:30px; flex-shrink:0;"></div>
+      <div class="mcq-options" style="flex:1;">
+        <div class="mcq-opt" onclick="pickMCQ(this,'wrong')">α) Άστρος</div>
+        <div class="mcq-opt" onclick="pickMCQ(this,'correct')">β) Επίδαυρος</div>
+        <div class="mcq-opt" onclick="pickMCQ(this,'wrong')">γ) Τροιζήνα</div>
+        <div class="mcq-opt" onclick="pickMCQ(this,'wrong')">δ) Κόρινθος</div>
+      </div>
+    </div>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">
+      <div class="toggle-bar"><span class="arrow">▶</span> Απάντηση</div>
+    </button>
+    <div class="answer-body">
+      <div class="answer-label">✅ Απάντηση</div>
+      <div class="answer-text">Σωστό είναι το <strong>β) Επίδαυρος</strong> (Δεκέμβριος 1821). Εκεί ψηφίστηκε για πρώτη φορά Σύνταγμα, το «Προσωρινό Πολίτευμα της Ελλάδος».</div>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="q-card purple">
+    <div class="q-header">
+      <div class="q-num">8</div>
+      <div class="q-text">Τι αποφάσισε η Β΄ Εθνοσυνέλευση (Άστρος, 1823);</div>
+      <span class="q-type">Κατανόηση</span>
+    </div>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">
+      <div class="toggle-bar"><span class="arrow">▶</span> Απάντηση</div>
+    </button>
+    <div class="answer-body">
+      <div class="answer-label">✅ Απάντηση</div>
+      <div class="answer-text">
+        <ul>
+          <li>Ψήφισε <strong>νέο Σύνταγμα</strong>.</li>
+          <li>Αποφάσισε να <strong>καταργηθούν τα τοπικά κέντρα εξουσίας</strong>.</li>
+          <li>Ενισχύθηκε η <strong>κεντρική διοίκηση</strong>.</li>
+          <li>Δημιουργήθηκαν <strong>τρία πολιτικά κόμματα</strong>: Αγγλικό, Γαλλικό, Ρωσικό.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="q-card teal">
+    <div class="q-header">
+      <div class="q-num">9</div>
+      <div class="q-text">Ποιες σημαντικές αποφάσεις πάρθηκαν στη Γ΄ Εθνοσυνέλευση (Τροιζήνα, 1827);</div>
+      <span class="q-type">Σύνθεση</span>
+    </div>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">
+      <div class="toggle-bar"><span class="arrow">▶</span> Απάντηση</div>
+    </button>
+    <div class="answer-body">
+      <div class="answer-label">✅ Απάντηση</div>
+      <div class="answer-text">
+        <ul>
+          <li>Ψήφισε <strong>νέο, δημοκρατικότερο Σύνταγμα</strong>.</li>
+          <li>Εξελέγη <strong>Ιωάννης Καποδίστριας</strong> Κυβερνήτης της Ελλάδας.</li>
+          <li>Αρχηγοί ενόπλων: <strong>σερ Ρίτσαρντ Τσωρτς</strong> (ξηρά) και <strong>λόρδος Κόχραν</strong> (θάλασσα).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q10 Matching -->
+  <div class="q-card orange">
+    <div class="q-header">
+      <div class="q-num">10</div>
+      <div class="q-text">Αντιστοίχισε κάθε έννοια με τον σωστό ορισμό:</div>
+      <span class="q-type">Αντιστοίχιση</span>
+    </div>
+    <div style="padding: 10px 18px 14px; background: var(--orange-light);">
+      <table class="match-table">
+        <tr>
+          <td>Σύνταγμα</td>
+          <td class="match-arrow">→</td>
+          <td>___________</td>
+        </tr>
+        <tr>
+          <td>Βουλευτικό</td>
+          <td class="match-arrow">→</td>
+          <td>___________</td>
+        </tr>
+        <tr>
+          <td>Εκτελεστικό</td>
+          <td class="match-arrow">→</td>
+          <td>___________</td>
+        </tr>
+      </table>
+      <p style="margin-top:10px; font-size:0.82rem; font-weight:700; color:#7c5c30;">Επιλογές: &nbsp; α) Η Κυβέρνηση &nbsp; β) Το σώμα που ψηφίζει νόμους &nbsp; γ) Οι θεμελιώδεις νόμοι του κράτους</p>
+    </div>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">
+      <div class="toggle-bar"><span class="arrow">▶</span> Απάντηση</div>
+    </button>
+    <div class="answer-body">
+      <div class="answer-label">✅ Απάντηση</div>
+      <div class="answer-text">
+        <ul>
+          <li><strong>Σύνταγμα</strong> → γ) Οι θεμελιώδεις νόμοι του κράτους</li>
+          <li><strong>Βουλευτικό</strong> → β) Το σώμα που ψηφίζει νόμους</li>
+          <li><strong>Εκτελεστικό</strong> → α) Η Κυβέρνηση</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q11 Σωστό/Λάθος -->
+  <div class="q-card red">
+    <div class="q-header">
+      <div class="q-num">11</div>
+      <div class="q-text">Σωστό ή Λάθος; Σημείωσε Σ ή Λ και διόρθωσε όσα είναι λάθος.</div>
+      <span class="q-type">Σ / Λ</span>
+    </div>
+    <div style="padding: 10px 18px 14px; background: var(--red-light);">
+      <table style="width:100%; border-collapse:separate; border-spacing:0 6px; font-size:0.9rem; font-weight:700;">
+        <tr>
+          <td style="padding:7px 12px; background:white; border:1.5px solid #fecaca; border-radius:8px;">α) Η Α΄ Εθνοσυνέλευση έγινε στο Άστρος.</td>
+          <td style="width:50px; text-align:center; padding:7px; background:white; border:1.5px solid #fecaca; border-radius:8px; font-size:1rem;">Σ / Λ</td>
+        </tr>
+        <tr>
+          <td style="padding:7px 12px; background:white; border:1.5px solid #fecaca; border-radius:8px;">β) Στη Ναυμαχία του Ναβαρίνου νίκησε ο τουρκοαιγυπτιακός στόλος.</td>
+          <td style="width:50px; text-align:center; padding:7px; background:white; border:1.5px solid #fecaca; border-radius:8px; font-size:1rem;">Σ / Λ</td>
+        </tr>
+        <tr>
+          <td style="padding:7px 12px; background:white; border:1.5px solid #fecaca; border-radius:8px;">γ) Ο Καποδίστριας εκλέχθηκε Κυβερνήτης στη Γ΄ Εθνοσυνέλευση.</td>
+          <td style="width:50px; text-align:center; padding:7px; background:white; border:1.5px solid #fecaca; border-radius:8px; font-size:1rem;">Σ / Λ</td>
+        </tr>
+        <tr>
+          <td style="padding:7px 12px; background:white; border:1.5px solid #fecaca; border-radius:8px;">δ) Η Ιερά Συμμαχία υποστήριξε την Ελληνική Επανάσταση από την αρχή.</td>
+          <td style="width:50px; text-align:center; padding:7px; background:white; border:1.5px solid #fecaca; border-radius:8px; font-size:1rem;">Σ / Λ</td>
+        </tr>
+      </table>
+    </div>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">
+      <div class="toggle-bar"><span class="arrow">▶</span> Απάντηση</div>
+    </button>
+    <div class="answer-body">
+      <div class="answer-label">✅ Απαντήσεις</div>
+      <div class="answer-text">
+        <ul>
+          <li>α) <strong>Λ</strong> — Η Α΄ έγινε στην <strong>Επίδαυρο</strong>. Στο Άστρος έγινε η Β΄.</li>
+          <li>β) <strong>Λ</strong> — Νίκησαν οι <strong>σύμμαχοι</strong> (Άγγλοι, Γάλλοι, Ρώσοι).</li>
+          <li>γ) <strong>Σ</strong> — Σωστό.</li>
+          <li>δ) <strong>Λ</strong> — Η Ιερά Συμμαχία ήταν <strong>εναντίον</strong> κάθε επανάστασης.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    © myspiderwebsite | Christina Papadimitriou
+  </div>
+
+</div>
+
+<script>
+function toggleAnswer(btn) {
+  const body = btn.nextElementSibling;
+  const arrow = btn.querySelector('.arrow');
+  const isOpen = body.classList.contains('visible');
+  body.classList.toggle('visible', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+}
+
+function pickMCQ(el, type) {
+  const siblings = el.parentElement.querySelectorAll('.mcq-opt');
+  siblings.forEach(s => { s.classList.remove('correct','wrong'); });
+  el.classList.add(type);
+}
+
+function toggleAll() {
+  const bodies = document.querySelectorAll('.answer-body');
+  const arrows = document.querySelectorAll('.arrow');
+  const anyHidden = [...bodies].some(b => !b.classList.contains('visible'));
+  bodies.forEach(b => b.classList.toggle('visible', anyHidden));
+  arrows.forEach(a => a.classList.toggle('open', anyHidden));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Η Γενοκτονία των Ποντίων – Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: #f0f7ff; min-height: 100vh; padding: 20px; }
+
+  header { text-align: center; padding: 24px 16px 12px; }
+  header h1 { font-size: 1.7rem; font-weight: 800; color: #1a5c8a; }
+  header p { color: #5a7fa0; font-size: 0.92rem; margin-top: 4px; }
+
+  .progress-wrap { max-width: 620px; margin: 14px auto 0; }
+  .progress-bar { background: #d6e8f5; border-radius: 99px; height: 10px; }
+  .progress-fill { height: 10px; background: linear-gradient(90deg, #2196a8, #1a5c8a); border-radius: 99px; transition: width 0.4s; }
+  .progress-label { font-size: 0.82rem; color: #5a7fa0; margin-top: 4px; text-align: right; }
+
+  .qbox { max-width: 620px; margin: 18px auto; background: white; border-radius: 20px; box-shadow: 0 6px 24px rgba(0,0,0,0.09); overflow: hidden; }
+
+  .qimg { width: 100%; height: 200px; object-fit: cover; display: block; }
+  .qimg-placeholder { width: 100%; height: 130px; background: linear-gradient(135deg, #1a5c8a, #2196a8); display: flex; align-items: center; justify-content: center; font-size: 4rem; }
+
+  .qbody { padding: 22px 24px 24px; }
+  .qnum { font-size: 0.78rem; color: #2196a8; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .qtext { font-size: 1.12rem; font-weight: 700; color: #1a3a52; line-height: 1.5; margin-bottom: 18px; }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt { padding: 12px 18px; border: 2px solid #d6e8f5; border-radius: 12px; cursor: pointer; font-family: 'Nunito', sans-serif; font-size: 0.98rem; font-weight: 600; color: #1a3a52; background: #f8fbff; text-align: left; transition: all 0.18s; }
+  .opt:hover:not(:disabled) { border-color: #2196a8; background: #e8f5f8; }
+  .opt.correct { border-color: #2e9e5b; background: #e6f7ed; color: #1a6638; }
+  .opt.wrong { border-color: #d9534f; background: #fdf0f0; color: #8b2020; }
+  .opt.reveal { border-color: #2e9e5b; background: #e6f7ed; color: #1a6638; }
+  .opt:disabled { cursor: default; }
+
+  .feedback { margin-top: 14px; padding: 12px 16px; border-radius: 10px; font-size: 0.92rem; line-height: 1.5; display: none; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #e6f7ed; color: #1a6638; border-left: 4px solid #2e9e5b; }
+  .feedback.no { background: #fdf0f0; color: #8b2020; border-left: 4px solid #d9534f; }
+
+  .btn-next { margin-top: 16px; padding: 11px 32px; background: #1a5c8a; color: white; border: none; border-radius: 99px; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; display: none; transition: background 0.2s; }
+  .btn-next:hover { background: #154d75; }
+  .btn-next.show { display: inline-block; }
+
+  /* RESULTS */
+  .results { max-width: 620px; margin: 20px auto; background: white; border-radius: 20px; box-shadow: 0 6px 24px rgba(0,0,0,0.09); padding: 36px 28px; text-align: center; display: none; }
+  .results.show { display: block; }
+  .score-circle { width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #1a5c8a, #2196a8); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 4px 16px rgba(26,92,138,0.3); }
+  .score-num { font-size: 2.2rem; font-weight: 800; line-height: 1; }
+  .score-max { font-size: 0.85rem; opacity: 0.8; }
+  .results h2 { font-size: 1.4rem; font-weight: 800; color: #1a3a52; margin-bottom: 8px; }
+  .results p { color: #5a7fa0; font-size: 0.95rem; line-height: 1.6; }
+  .btn-restart { margin-top: 20px; padding: 12px 36px; background: #2196a8; color: white; border: none; border-radius: 99px; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; }
+  .btn-restart:hover { background: #1a7d8e; }
+
+  .img-credit-q { font-size: 0.65rem; color: #aaa; text-align: right; padding: 2px 8px; background: rgba(0,0,0,0.03); }
+  .footer { text-align: center; color: #aaa; font-size: 0.78rem; margin-top: 24px; padding-top: 12px; border-top: 1px solid #dde; max-width: 620px; margin-left: auto; margin-right: auto; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🕊️ Η Γενοκτονία των Ποντίων</h1>
+  <p>Quiz – ΣΤ΄ Δημοτικού | Ιστορία</p>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="pbar" style="width:0%"></div></div>
+  <div class="progress-label" id="plabel">1 / 10</div>
+</div>
+
+<div class="qbox" id="qbox">
+  <div id="qimg-area"></div>
+  <div class="qbody">
+    <div class="qnum" id="qnum"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="btn-next" id="btn-next" onclick="next()">Επόμενη ερώτηση →</button>
+  </div>
+</div>
+
+<div class="results" id="results">
+  <div class="score-circle">
+    <div class="score-num" id="score-num"></div>
+    <div class="score-max" id="score-max"></div>
+  </div>
+  <h2 id="result-title"></h2>
+  <p id="result-msg"></p>
+  <button class="btn-restart" onclick="restart()">🔄 Ξανά από την αρχή</button>
+</div>
+
+<div class="footer">© myspiderwebsite | Christina Papadimitriou</div>
+
+<script>
+const questions = [
+  {
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Map_of_Pontus.png/400px-Map_of_Pontus.png",
+    imgCredit: "Χάρτης του Πόντου – Wikimedia Commons (Public Domain)",
+    q: "Πού ζούσαν οι Πόντιοι;",
+    opts: ["Στα νότια παράλια της Μαύρης Θάλασσας", "Στα νησιά του Αιγαίου", "Στη νότια Ελλάδα", "Στην Κύπρο"],
+    correct: 0,
+    exp: "Οι Πόντιοι ζούσαν στον Πόντο, μια περιοχή στα νότια παράλια της Μαύρης Θάλασσας, που σήμερα ανήκει στη βόρεια Τουρκία."
+  },
+  {
+    emoji: "🏛️",
+    q: "Ποια κυβέρνηση αποφάσισε τις διώξεις και τους εκτοπισμούς των Ποντίων;",
+    opts: ["Η ελληνική κυβέρνηση", "Η κυβέρνηση της Οθωμανικής Αυτοκρατορίας", "Η ρωσική κυβέρνηση", "Η βρετανική κυβέρνηση"],
+    correct: 1,
+    exp: "Η κυβέρνηση της Οθωμανικής Αυτοκρατορίας — και συγκεκριμένα το κίνημα των Νεότουρκων — ήταν υπεύθυνη για τις διώξεις."
+  },
+  {
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Black_Sea_map.png/400px-Black_Sea_map.png",
+    imgCredit: "Χάρτης Μαύρης Θάλασσας – Wikimedia Commons (Public Domain)",
+    q: "Πότε έγιναν τα κύρια γεγονότα της Γενοκτονίας των Ποντίων;",
+    opts: ["1850–1870", "1900–1910", "1916–1923", "1940–1945"],
+    correct: 2,
+    exp: "Τα κύρια γεγονότα έγιναν μεταξύ 1916 και 1923 — εκτοπισμοί, τάγματα εργασίας και πορείες θανάτου."
+  },
+  {
+    emoji: "⛏️",
+    q: "Τι ήταν τα «τάγματα εργασίας» στα οποία στάλθηκαν πολλοί Πόντιοι;",
+    opts: ["Σχολεία που ίδρυσε η οθωμανική κυβέρνηση", "Ομάδες αναγκαστικής εργασίας σε εξαντλητικές συνθήκες", "Εθελοντικές ομάδες οικοδόμησης", "Στρατιωτικές μονάδες"],
+    correct: 1,
+    exp: "Στα τάγματα εργασίας, οι εκτοπισμένοι αναγκάζονταν να δουλεύουν σε σκληρές συνθήκες, χωρίς επαρκή τροφή ή ιατρική φροντίδα."
+  },
+  {
+    emoji: "🕯️",
+    q: "Πόσοι Πόντιοι υπολογίζεται ότι έχασαν τη ζωή τους;",
+    opts: ["Περίπου 10.000", "Περίπου 50.000", "Πάνω από 300.000", "Πάνω από 1.000.000"],
+    correct: 2,
+    exp: "Οι ιστορικοί εκτιμούν ότι πάνω από 300.000 Πόντιοι έχασαν τη ζωή τους από βία, εξάντληση, πείνα και αρρώστιες."
+  },
+  {
+    emoji: "🚢",
+    q: "Τι έγινε με τους Ποντίους που επέζησαν;",
+    opts: ["Έμειναν στον Πόντο", "Εγκαταστάθηκαν στη Ρωσία", "Ήρθαν στην Ελλάδα ως πρόσφυγες", "Μετακόμισαν στην Αμερική"],
+    correct: 2,
+    exp: "Οι επιζήσαντες ήρθαν στην Ελλάδα ως πρόσφυγες, αφήνοντας πίσω τα σπίτια και τις περιουσίες τους."
+  },
+  {
+    emoji: "🕊️",
+    q: "Πότε είναι η Ημέρα Μνήμης της Γενοκτονίας των Ελλήνων του Πόντου;",
+    opts: ["25 Μαρτίου", "28 Οκτωβρίου", "19 Μαΐου", "17 Νοεμβρίου"],
+    correct: 2,
+    exp: "Η 19η Μαΐου έχει οριστεί ως Ημέρα Μνήμης της Γενοκτονίας των Ελλήνων του Πόντου."
+  },
+  {
+    emoji: "🌍",
+    q: "Ποιοι άλλοι λαοί υπέφεραν την ίδια εποχή από την ίδια κυβέρνηση;",
+    opts: ["Γάλλοι και Βρετανοί", "Αρμένιοι και Ασσύριοι", "Βούλγαροι και Σέρβοι", "Ιταλοί και Ισπανοί"],
+    correct: 1,
+    exp: "Αρμένιοι και Ασσύριοι ήταν επίσης χριστιανικοί πληθυσμοί που στοχοποιήθηκαν από την οθωμανική κυβέρνηση την ίδια εποχή."
+  },
+  {
+    emoji: "📖",
+    q: "Τι σημαίνει η λέξη «γενοκτονία»;",
+    opts: ["Η μετανάστευση ενός λαού σε άλλη χώρα", "Η συστηματική εξόντωση ενός λαού ή εθνικής ομάδας", "Ο πόλεμος μεταξύ δύο χωρών", "Η κατάκτηση μιας περιοχής"],
+    correct: 1,
+    exp: "Γενοκτονία είναι η συστηματική εξόντωση ενός λαού ή εθνικής ομάδας. Καταδικάζεται από το διεθνές δίκαιο ως ένα από τα βαρύτερα εγκλήματα."
+  },
+  {
+    emoji: "💡",
+    q: "Γιατί είναι σημαντικό να θυμόμαστε γεγονότα όπως η Γενοκτονία των Ποντίων;",
+    opts: ["Για να μισούμε άλλους λαούς", "Για να τιμούμε τα θύματα και να αποτρέψουμε παρόμοια γεγονότα στο μέλλον", "Γιατί μας το επιβάλλει ο νόμος", "Δεν έχει σημασία να θυμόμαστε"],
+    correct: 1,
+    exp: "Η μνήμη δεν είναι μίσος — είναι σεβασμός στα θύματα και μάθημα για το μέλλον, ώστε τέτοια εγκλήματα να μην επαναληφθούν ποτέ."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+
+function render() {
+  const q = questions[current];
+  answered = false;
+
+  // image area
+  const imgArea = document.getElementById('qimg-area');
+  if (q.img) {
+    imgArea.innerHTML = `<img class="qimg" src="${q.img}" alt="Εικόνα" onerror="this.parentElement.innerHTML='<div class=qimg-placeholder>${q.emoji||'🕊️'}</div>'"><div class="img-credit-q">${q.imgCredit||''}</div>`;
+  } else if (q.emoji) {
+    imgArea.innerHTML = `<div class="qimg-placeholder">${q.emoji}</div>`;
+  } else {
+    imgArea.innerHTML = '';
+  }
+
+  document.getElementById('qnum').textContent = `Ερώτηση ${current + 1} από ${questions.length}`;
+  document.getElementById('qtext').textContent = q.q;
+
+  const optsEl = document.getElementById('opts');
+  optsEl.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.textContent = opt;
+    btn.onclick = () => answer(i);
+    optsEl.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('btn-next').className = 'btn-next';
+
+  const pct = (current / questions.length * 100);
+  document.getElementById('pbar').style.width = pct + '%';
+  document.getElementById('plabel').textContent = `${current + 1} / ${questions.length}`;
+}
+
+function answer(i) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const btns = document.querySelectorAll('.opt');
+  btns.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('feedback');
+  if (i === q.correct) {
+    score++;
+    btns[i].classList.add('correct');
+    fb.className = 'feedback show ok';
+    fb.innerHTML = '✅ Σωστά! ' + q.exp;
+  } else {
+    btns[i].classList.add('wrong');
+    btns[q.correct].classList.add('reveal');
+    fb.className = 'feedback show no';
+    fb.innerHTML = '❌ Όχι ακριβώς. ' + q.exp;
+  }
+
+  const btnNext = document.getElementById('btn-next');
+  btnNext.className = 'btn-next show';
+  btnNext.textContent = current < questions.length - 1 ? 'Επόμενη ερώτηση →' : 'Δες τα αποτελέσματα →';
+}
+
+function next() {
+  current++;
+  if (current >= questions.length) {
+    showResults();
+  } else {
+    render();
+  }
+}
+
+function showResults() {
+  document.getElementById('qbox').style.display = 'none';
+  document.getElementById('results').classList.add('show');
+  document.getElementById('score-num').textContent = score;
+  document.getElementById('score-max').textContent = '/ ' + questions.length;
+
+  const pct = score / questions.length;
+  let title, msg;
+  if (pct === 1) {
+    title = '🌟 Άριστα!';
+    msg = 'Τέλεια! Απάντησες σωστά σε όλες τις ερωτήσεις. Γνωρίζεις πολύ καλά αυτό το σημαντικό κεφάλαιο της ιστορίας.';
+  } else if (pct >= 0.7) {
+    title = '👍 Πολύ καλά!';
+    msg = 'Έχεις καλή κατανόηση του θέματος. Μπορείς να ξαναδείς τις ερωτήσεις που δυσκολεύτηκες.';
+  } else if (pct >= 0.5) {
+    title = '📚 Καλή προσπάθεια!';
+    msg = 'Ξανά από την αρχή και σίγουρα θα τα πας ακόμα καλύτερα!';
+  } else {
+    title = '💪 Συνέχισε!';
+    msg = 'Διάβασε ξανά τις σημειώσεις σου και δοκίμασε ξανά — μπορείς!';
+  }
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('pbar').style.width = '100%';
+  document.getElementById('plabel').textContent = `${questions.length} / ${questions.length}`;
+}
+
+function restart() {
+  current = 0;
+  score = 0;
+  document.getElementById('qbox').style.display = 'block';
+  document.getElementById('results').classList.remove('show');
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

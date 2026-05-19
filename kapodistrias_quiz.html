@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Καποδίστριας Κουίζ</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1a73e8;
+    --blue-light: #e8f0fe;
+    --green: #0f9d58;
+    --green-light: #e6f4ea;
+    --red: #d93025;
+    --red-light: #fce8e6;
+    --gray-light: #f8f9fa;
+    --white: #ffffff;
+    --shadow-lg: 0 8px 30px rgba(0,0,0,0.15);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #e3f2fd 0%, #fff9c4 50%, #f3e5f5 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px 40px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+    animation: fadeDown 0.6s ease;
+  }
+  .header-icon {
+    font-size: 52px;
+    margin-bottom: 8px;
+    display: block;
+    animation: bounce 2s ease infinite;
+  }
+  @keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+  }
+  .header h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
+    font-weight: 800;
+    color: #1a237e;
+    line-height: 1.2;
+  }
+  .header h2 {
+    font-size: clamp(0.95rem, 3vw, 1.1rem);
+    font-weight: 600;
+    color: #3949ab;
+    margin-top: 4px;
+  }
+
+  .progress-wrap {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 18px;
+    animation: fadeDown 0.6s ease 0.1s both;
+  }
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #3949ab;
+    margin-bottom: 6px;
+  }
+  .progress-bar {
+    height: 10px;
+    background: #c5cae9;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1a73e8, #7c4dff);
+    border-radius: 999px;
+    transition: width 0.5s ease;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 600px;
+    padding: 28px 24px;
+    animation: slideUp 0.4s ease;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-number {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #7c4dff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .q-text {
+    font-size: clamp(1rem, 3.5vw, 1.15rem);
+    font-weight: 700;
+    color: #1a237e;
+    line-height: 1.5;
+    margin-bottom: 22px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 2.5px solid #e0e0e0;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--gray-light);
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(0.88rem, 3vw, 0.97rem);
+    font-weight: 600;
+    color: #333;
+    text-align: left;
+    line-height: 1.4;
+    width: 100%;
+  }
+  .option:hover:not([disabled]) {
+    border-color: var(--blue);
+    background: var(--blue-light);
+    transform: translateX(4px);
+  }
+  .option .badge {
+    min-width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #c5cae9;
+    color: #1a237e;
+    font-weight: 800;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .option:hover:not([disabled]) .badge {
+    background: var(--blue);
+    color: white;
+  }
+  .option.correct {
+    border-color: var(--green);
+    background: var(--green-light);
+    color: #1b5e20;
+    cursor: default;
+  }
+  .option.correct .badge { background: var(--green); color: white; }
+  .option.wrong {
+    border-color: var(--red);
+    background: var(--red-light);
+    color: #b71c1c;
+    cursor: default;
+  }
+  .option.wrong .badge { background: var(--red); color: white; }
+  .option.dimmed { opacity: 0.4; cursor: default; }
+  .option[disabled] { cursor: default; }
+
+  .feedback {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    display: none;
+    animation: fadeDown 0.3s ease;
+  }
+  .feedback.show-correct {
+    background: var(--green-light);
+    color: #1b5e20;
+    border-left: 4px solid var(--green);
+    display: block;
+  }
+  .feedback.show-wrong {
+    background: var(--red-light);
+    color: #b71c1c;
+    border-left: 4px solid var(--red);
+    display: block;
+  }
+
+  .btn-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 22px;
+  }
+  .btn-next {
+    background: linear-gradient(135deg, #1a73e8, #7c4dff);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    padding: 12px 30px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.97rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(26,115,232,0.3);
+    display: none;
+  }
+  .btn-next:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(26,115,232,0.4);
+  }
+  .btn-next.visible { display: block; }
+
+  .score-screen {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 600px;
+    padding: 40px 24px;
+    text-align: center;
+    display: none;
+    animation: slideUp 0.5s ease;
+  }
+  .score-screen.visible { display: block; }
+  .score-emoji { font-size: 72px; margin-bottom: 16px; display: block; }
+  .score-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1a237e;
+    margin-bottom: 8px;
+  }
+  .score-subtitle {
+    font-size: 1rem;
+    color: #5f6368;
+    margin-bottom: 24px;
+    font-weight: 600;
+  }
+  .score-big {
+    font-family: 'Baloo 2', cursive;
+    font-size: 5rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+    color: #1a73e8;
+  }
+  .score-label {
+    font-size: 0.9rem;
+    color: #5f6368;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .stars { font-size: 2.2rem; margin-bottom: 24px; letter-spacing: 4px; }
+  .score-bar-wrap {
+    background: #e8eaf6;
+    border-radius: 999px;
+    height: 14px;
+    margin: 0 auto 28px;
+    max-width: 300px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #1a73e8, #7c4dff);
+    transition: width 1s ease 0.3s;
+    width: 0%;
+  }
+  .btn-restart {
+    background: linear-gradient(135deg, #1a73e8, #7c4dff);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    padding: 14px 36px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(26,115,232,0.3);
+    transition: all 0.2s ease;
+  }
+  .btn-restart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(26,115,232,0.4);
+  }
+
+  .footer {
+    margin-top: 28px;
+    font-size: 0.78rem;
+    color: #7986cb;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    animation: confettiFall 3s ease forwards;
+    pointer-events: none;
+    z-index: 999;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-icon">🏛️</span>
+  <h1>Καποδίστριας Κουίζ</h1>
+  <h2>Ιστορία ΣΤ΄ Δημοτικού</h2>
+</div>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-info">
+    <span id="progressText">Ερώτηση 1 από 10</span>
+    <span id="progressPct">0%</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+  </div>
+</div>
+
+<div class="card" id="quizCard">
+  <div class="q-number" id="qNumber">ΕΡΩΤΗΣΗ 1</div>
+  <div class="q-text" id="qText"></div>
+  <div class="options" id="options"></div>
+  <div class="feedback" id="feedback"></div>
+  <div class="btn-row">
+    <button class="btn-next" id="btnNext" onclick="nextQuestion()">Επόμενη →</button>
+  </div>
+</div>
+
+<div class="score-screen" id="scoreScreen">
+  <span class="score-emoji" id="scoreEmoji">🎉</span>
+  <div class="score-title" id="scoreTitle">Μπράβο!</div>
+  <div class="score-subtitle" id="scoreSubtitle">Ολοκλήρωσες το κουίζ!</div>
+  <div class="score-big" id="scoreBig">—</div>
+  <div class="score-label">σωστές απαντήσεις από 10</div>
+  <div class="stars" id="stars">⭐⭐⭐</div>
+  <div class="score-bar-wrap">
+    <div class="score-bar-fill" id="scoreBarFill"></div>
+  </div>
+  <button class="btn-restart" onclick="restart()">🔄 Ξανά από την αρχή</button>
+</div>
+
+<div class="footer">© myspiderwebsite | Christina Papadimitriou</div>
+
+<script>
+const questions = [
+  {
+    q: "Ποια πόλη αποτέλεσε την πρώτη πρωτεύουσα του ελληνικού κράτους όπου έφτασε ο Ιωάννης Καποδίστριας;",
+    opts: ["Άργος", "Αθήνα", "Ναύπλιο", "Αίγινα"],
+    correct: 2,
+    explain: "✅ Σωστά! Ο Καποδίστριας αποβιβάστηκε στο <b>Ναύπλιο</b> τον Ιανουάριο του 1828, που ήταν τότε η πρωτεύουσα του νέου ελληνικού κράτους."
+  },
+  {
+    q: "Για ποιο λόγο ο Καποδίστριας συγκέντρωσε όλες τις εξουσίες στο πρόσωπό του κατά την έναρξη της θητείας του;",
+    opts: ["Για να οργανώσει αποτελεσματικά το κράτος και να βελτιώσει τη διοίκηση", "Για να επιβάλει ένα μοναρχικό πολίτευμα ξένο προς τις αποφάσεις των Εθνοσυνελεύσεων", "Επειδή του το επέβαλαν οι ηγέτες της Ιερής Συμμαχίας", "Για να προετοιμάσει την παράδοση της εξουσίας στις Μεγάλες Δυνάμεις"],
+    correct: 0,
+    explain: "✅ Σωστά! Ο Καποδίστριας πίστευε ότι μόνο με ισχυρή κεντρική εξουσία μπορούσε να <b>οργανωθεί αποτελεσματικά το νέο κράτος</b> στις δύσκολες συνθήκες μετά την Επανάσταση."
+  },
+  {
+    q: "Τι ήταν ο «Φοίνικας» που καθιέρωσε ο Καποδίστριας;",
+    opts: ["Το πρώτο πολεμικό πλοίο του τακτικού ελληνικού ναυτικού", "Το πρώτο αργυρό νόμισμα του ελληνικού κράτους", "Η ονομασία της πρώτης γεωργικής σχολής στην Τίρυνθα", "Ένα ειδικό τιμητικό παράσημο για τους αγωνιστές του 1821"],
+    correct: 1,
+    explain: "✅ Σωστά! Ο «<b>Φοίνικας</b>» ήταν το πρώτο νόμισμα του ελληνικού κράτους — σύμβολο αναγέννησης, όπως ο μυθικός Φοίνικας που ξαναγεννιέται από τις στάχτες του."
+  },
+  {
+    q: "Ποιο νέο είδος καλλιέργειας εισήγαγε ο Καποδίστριας για να στηρίξει τη διατροφή του πληθυσμού;",
+    opts: ["Την καλλιέργεια του καπνού", "Την καλλιέργεια της πατάτας", "Την καλλιέργεια του βαμβακιού", "Την εκτεταμένη καλλιέργεια ελαιοδέντρων"],
+    correct: 1,
+    explain: "✅ Σωστά! Ο Καποδίστριας εισήγαγε την καλλιέργεια της <b>πατάτας</b>. Λέγεται ότι για να πείσει τους αγρότες που αρχικά αρνούνταν, τοποθέτησε φρουρούς γύρω από σακιά με πατάτες ώστε να φαίνονται πολύτιμες!"
+  },
+  {
+    q: "Πώς λειτουργούσαν τα «αλληλοδιδακτικά» σχολεία στην καποδιστριακή περίοδο;",
+    opts: ["Οι δάσκαλοι από το εξωτερικό δίδασκαν εθελοντικά τους Έλληνες μαθητές", "Οι καλύτεροι μαθητές των μεγαλύτερων τάξεων δίδασκαν τους μικρότερους με τη βοήθεια του δασκάλου", "Σχολεία όπου η διδασκαλία γινόταν αποκλειστικά μέσω της μελέτης αρχαίων κειμένων", "Σχολεία χωρίς δάσκαλο, όπου οι μαθητές αυτοδιδάσκονταν"],
+    correct: 1,
+    explain: "✅ Σωστά! Στα <b>αλληλοδιδακτικά σχολεία</b> οι καλύτεροι μαθητές («βοηθοί») δίδασκαν τους μικρότερους υπό την εποπτεία του δασκάλου. Έτσι αντιμετωπίστηκε η μεγάλη έλλειψη δασκάλων."
+  },
+  {
+    q: "Ποιος ήταν ο σκοπός του «Κεντρικού Σχολείου» που λειτούργησε στην Αίγινα;",
+    opts: ["Η διδασκαλία σύγχρονων μεθόδων γεωργίας και κτηνοτροφίας", "Η παροχή στέγης και τροφής αποκλειστικά στα ορφανά του πολέμου", "Η προετοιμασία των μαθητών για ανώτερες σπουδές", "Η εκπαίδευση των αξιωματικών του τακτικού στρατού"],
+    correct: 2,
+    explain: "✅ Σωστά! Το <b>Κεντρικό Σχολείο</b> της Αίγινας λειτουργούσε ως σχολείο ανώτερης βαθμίδας που προετοίμαζε τους μαθητές για ανώτερες σπουδές."
+  },
+  {
+    q: "Ποιος ήταν ο επικεφαλής των ελληνικών δυνάμεων στην τελευταία μάχη της Επανάστασης στην Πέτρα της Βοιωτίας;",
+    opts: ["Δημήτριος Υψηλάντης", "Αλέξανδρος Υψηλάντης", "Θεόδωρος Κολοκοτρώνης", "Ιωάννης Καποδίστριας"],
+    correct: 0,
+    explain: "✅ Σωστά! Ο <b>Δημήτριος Υψηλάντης</b> ηγήθηκε των ελληνικών δυνάμεων στη μάχη της Πέτρας (Σεπτέμβριος 1829), την τελευταία μάχη της Ελληνικής Επανάστασης."
+  },
+  {
+    q: "Πώς περιγράφει ο Φρειδερίκος Τιρς την κατάσταση της αγροτικής τάξης στο πρώτο ελληνικό κράτος;",
+    opts: ["Ως αθλιότατη, με έλλειψη ακόμα και των βασικών εργαλείων και ζώων για το όργωμα", "Ως επαρκώς εξοπλισμένη με σιδερένια άροτρα δυτικού τύπου", "Ως ταχέως αναπτυσσόμενη χάρη στην εισαγωγή νέων μηχανημάτων", "Ως πλούσια σε παραγωγή μεταξιού και εξαγωγικά προϊόντα"],
+    correct: 0,
+    explain: "✅ Σωστά! Ο Φρειδερίκος Τιρς, Βαυαρός φιλέλληνας, περιγράφει <b>αθλιότατες συνθήκες</b> — οι αγρότες στερούνταν ακόμα και τα βασικά εργαλεία και ζώα για να καλλιεργήσουν τη γη τους."
+  },
+  {
+    q: "Ποια ήταν η στάση του Αυστριακού Καγκελάριου Μέτερνιχ απέναντι στον Καποδίστρια;",
+    opts: ["Τον υποστήριζε θερμά ως εκπρόσωπο της τσαρικής αυλής στην Ελλάδα", "Τον βοήθησε να εξασφαλίσει ευνοϊκότερα σύνορα για το νέο κράτος", "Τον υποψιαζόταν πάντα για σχέσεις με ανατρεπτικά ευρωπαϊκά κινήματα", "Θεωρούσε ότι οι ιδέες του Καποδίστρια ταυτίζονταν πλήρως με τις δικές του"],
+    correct: 2,
+    explain: "✅ Σωστά! Ο Μέτερνιχ ήταν εχθρικός απέναντι στον Καποδίστρια — τον <b>υποψιαζόταν</b> για επαφές με φιλελεύθερα και επαναστατικά κινήματα που απειλούσαν την τάξη της Ιερής Συμμαχίας."
+  },
+  {
+    q: "Ποιο ήταν το τραγικό αποτέλεσμα της σύγκρουσης του Καποδίστρια με τις πολιτικές ομάδες της εποχής;",
+    opts: ["Η αντικατάστασή του από μια τριμελή επιτροπή κυβερνητών", "Η εξορία του στην Αίγινα από τις Μεγάλες Δυνάμεις", "Η εθελούσια παραίτησή του και η επιστροφή του στη Ρωσία", "Η δολοφονία του στο Ναύπλιο το 1831 και η επικράτηση αναρχίας"],
+    correct: 3,
+    explain: "✅ Σωστά! Ο Καποδίστριας <b>δολοφονήθηκε στο Ναύπλιο στις 9 Οκτωβρίου 1831</b> από τον Γεώργιο Μαυρομιχάλη. Ο θάνατός του οδήγησε σε πολιτική αναρχία στο νέο κράτος."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+
+function render() {
+  const q = questions[current];
+  answered = false;
+
+  document.getElementById('qNumber').textContent = 'ΕΡΩΤΗΣΗ ' + (current + 1);
+  document.getElementById('qText').textContent = q.q;
+
+  const optDiv = document.getElementById('options');
+  optDiv.innerHTML = '';
+  const labels = ['Α', 'Β', 'Γ', 'Δ'];
+  q.opts.forEach(function(opt, i) {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = '<span class="badge">' + labels[i] + '</span><span>' + opt + '</span>';
+    btn.onclick = function() { selectAnswer(i); };
+    optDiv.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.innerHTML = '';
+
+  const btnNext = document.getElementById('btnNext');
+  btnNext.classList.remove('visible');
+  btnNext.textContent = current < questions.length - 1 ? 'Επόμενη →' : 'Αποτελέσματα 🏆';
+
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = Math.round((current / questions.length) * 100);
+  document.getElementById('progressText').textContent = 'Ερώτηση ' + (current + 1) + ' από ' + questions.length;
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function selectAnswer(chosen) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[current];
+  const btns = document.querySelectorAll('.option');
+  const fb = document.getElementById('feedback');
+
+  btns.forEach(function(btn, i) {
+    btn.disabled = true;
+    if (i === q.correct) {
+      btn.classList.add('correct');
+    } else if (i === chosen && chosen !== q.correct) {
+      btn.classList.add('wrong');
+    } else {
+      btn.classList.add('dimmed');
+    }
+  });
+
+  if (chosen === q.correct) {
+    score++;
+    fb.className = 'feedback show-correct';
+    fb.innerHTML = q.explain;
+  } else {
+    fb.className = 'feedback show-wrong';
+    fb.innerHTML = '❌ Λάθος! ' + q.explain.replace('✅ Σωστά! ', '');
+  }
+
+  document.getElementById('btnNext').classList.add('visible');
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showScore();
+  } else {
+    const card = document.getElementById('quizCard');
+    card.style.animation = 'none';
+    card.offsetHeight;
+    card.style.animation = 'slideUp 0.4s ease';
+    render();
+  }
+}
+
+function showScore() {
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+
+  const pct = Math.round((score / questions.length) * 100);
+  let emoji, title, subtitle;
+
+  if (score === 10) {
+    emoji = '🏆'; title = 'Άριστα! Τέλειο!';
+    subtitle = 'Γνωρίζεις τον Καποδίστρια σαν τον εαυτό σου!';
+  } else if (score >= 8) {
+    emoji = '🎉'; title = 'Μπράβο!';
+    subtitle = 'Εξαιρετικό αποτέλεσμα!';
+  } else if (score >= 6) {
+    emoji = '😊'; title = 'Καλά!';
+    subtitle = 'Λίγη ακόμα εξάσκηση και θα τα καταφέρεις!';
+  } else if (score >= 4) {
+    emoji = '📚'; title = 'Συνέχισε!';
+    subtitle = 'Διάβασε ξανά το κεφάλαιο και δοκίμασε!';
+  } else {
+    emoji = '💪'; title = 'Μην τα παρατάς!';
+    subtitle = 'Ξαναδιάβασε το μάθημα — θα τα πας καλύτερα!';
+  }
+
+  const stars = score >= 9 ? '⭐⭐⭐' : score >= 6 ? '⭐⭐' : '⭐';
+
+  document.getElementById('scoreEmoji').textContent = emoji;
+  document.getElementById('scoreTitle').textContent = title;
+  document.getElementById('scoreSubtitle').textContent = subtitle;
+  document.getElementById('scoreBig').textContent = score + '/10';
+  document.getElementById('stars').textContent = stars;
+
+  const screen = document.getElementById('scoreScreen');
+  screen.classList.add('visible');
+
+  setTimeout(function() {
+    document.getElementById('scoreBarFill').style.width = pct + '%';
+  }, 100);
+
+  if (score >= 8) launchConfetti();
+}
+
+function launchConfetti() {
+  const colors = ['#1a73e8','#7c4dff','#0f9d58','#f9ab00','#d93025','#00bcd4'];
+  for (let i = 0; i < 60; i++) {
+    setTimeout(function() {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.animationDuration = (2 + Math.random() * 2) + 's';
+      el.style.animationDelay = Math.random() * 0.5 + 's';
+      const size = (8 + Math.random() * 8) + 'px';
+      el.style.width = size;
+      el.style.height = size;
+      document.body.appendChild(el);
+      setTimeout(function() { el.remove(); }, 4000);
+    }, i * 40);
+  }
+}
+
+function restart() {
+  current = 0;
+  score = 0;
+  answered = false;
+  document.getElementById('scoreScreen').classList.remove('visible');
+  document.getElementById('quizCard').style.display = 'block';
+  document.getElementById('progressWrap').style.display = 'block';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

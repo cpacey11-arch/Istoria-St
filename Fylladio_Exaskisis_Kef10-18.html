@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Φυλλάδιο Εξάσκησης – Ιστορία ΣΤ΄ Κεφ. 10–18</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --c10: #1565C0; --c11: #6A1B9A; --c12: #C62828; --c13: #00695C;
+    --c14: #E65100; --c15: #283593; --c16: #4E342E; --c17: #1B5E20; --c18: #37474F;
+    --green: #2E7D32; --green-light: #E8F5E9; --ans-text: #1B5E20;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 50%, #E8F5E9 100%);
+    min-height: 100vh;
+    padding: 24px 12px 40px;
+  }
+  .page-header {
+    text-align: center;
+    margin-bottom: 32px;
+    background: white;
+    border-radius: 20px;
+    padding: 28px 24px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+  }
+  .page-header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.2em;
+    color: #1A237E;
+    letter-spacing: 1px;
+  }
+  .page-header p { color: #555; font-size: 1em; margin-top: 6px; }
+  .hint {
+    display: inline-block;
+    margin-top: 10px;
+    background: #E8F5E9;
+    color: #2E7D32;
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-size: 0.92em;
+    font-weight: 700;
+  }
+
+  .chapter {
+    background: white;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.09);
+  }
+  .chapter-header {
+    padding: 14px 20px;
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.25em;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .chapter-header .num {
+    background: rgba(255,255,255,0.25);
+    border-radius: 50%;
+    width: 34px; height: 34px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9em; font-weight: 900;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    padding: 10px 14px;
+    font-size: 0.92em;
+    font-weight: 800;
+    color: white;
+    text-align: left;
+  }
+  thead th:first-child { background: #455A64; border-radius: 0; }
+  thead th:last-child { background: #388E3C; }
+
+  tbody tr { border-bottom: 1px solid #EEE; }
+  tbody tr:last-child { border-bottom: none; }
+  td { padding: 11px 14px; font-size: 0.95em; vertical-align: top; }
+  td:first-child { width: 52%; color: #333; background: #FAFAFA; }
+  td:last-child { width: 48%; }
+
+  .answer-cell {
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s;
+  }
+  .answer-cell:hover { background: #F1F8E9 !important; }
+  .answer-text {
+    color: var(--ans-text);
+    font-weight: 700;
+    display: none;
+  }
+  .answer-cell.revealed .answer-text { display: block; }
+  .answer-cell.revealed .tap-hint { display: none; }
+  .tap-hint {
+    color: #AAA;
+    font-size: 0.85em;
+    font-style: italic;
+  }
+
+  /* Alternating rows */
+  tbody tr:nth-child(even) td:first-child { background: #F0F4F8; }
+  tbody tr:nth-child(even) td:last-child { background: #F9FBF9; }
+  tbody tr:nth-child(odd) td:last-child { background: #FAFEFA; }
+
+  /* Dates table */
+  .dates-section {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.09);
+    margin-bottom: 24px;
+  }
+  .dates-header {
+    background: #37474F;
+    padding: 14px 20px;
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.25em;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .dates-table thead th:first-child { background: #546E7A; }
+  .dates-table thead th:last-child { background: #388E3C; }
+  .dates-table td:first-child {
+    font-weight: 800; color: #37474F;
+    text-align: center; width: 28%;
+    background: #ECEFF1 !important;
+  }
+
+  .btn-reveal-all {
+    display: block;
+    margin: 0 auto 28px;
+    background: linear-gradient(135deg, #1565C0, #6A1B9A);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 13px 36px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.05em;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(21,101,192,0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-reveal-all:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(21,101,192,0.4); }
+  .btn-reveal-all:active { transform: translateY(0); }
+
+  footer {
+    text-align: center;
+    color: #999;
+    font-size: 0.82em;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #DDD;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>📖 Φυλλάδιο Εξάσκησης</h1>
+  <p>Ιστορία ΣΤ΄ Δημοτικού &nbsp;|&nbsp; Η Μεγάλη Επανάσταση (1821–1830)</p>
+  <p><strong>Κεφάλαια 10–18</strong></p>
+  <span class="hint">👆 Πάτα στην απάντηση για να την αποκαλύψεις!</span>
+</div>
+
+<button class="btn-reveal-all" onclick="revealAll()">🔍 Εμφάνιση Όλων των Απαντήσεων</button>
+
+<script>
+const chapters = [
+  { num: 10, title: "Ο Μάρκος Μπότσαρης", color: "var(--c10)", rows: [
+    ["Πότε γενικεύτηκαν οι συγκρούσεις στη Στερεά Ελλάδα;", "Στη διάρκεια του 1823"],
+    ["Ποιος ήταν ο Μάρκος Μπότσαρης;", "Έλληνας ήρωας που ξεχώρισε στην πολιορκία του Μεσολογγίου"],
+    ["Πότε σκοτώθηκε ο Μπότσαρης;", "Τον Αύγουστο του 1823"],
+    ["Πώς σκοτώθηκε;", "Κατά τη διάρκεια νυχτερινής αιφνιδιαστικής επίθεσης"],
+    ["Πού πολιορκήθηκαν οι Έλληνες στη Στερεά Ελλάδα;", "Στο Μεσολόγγι"],
+  ]},
+  { num: 11, title: "Ο Ιμπραήμ στην Πελοπόννησο – ο Παπαφλέσσας", color: "var(--c11)", rows: [
+    ["Πότε αποβιβάστηκε ο Ιμπραήμ Πασάς στην Πελοπόννησο;", "Τον χειμώνα 1824-1825"],
+    ["Πού αποβιβάστηκε;", "Στη Μεθώνη"],
+    ["Ποιος αντιτάχθηκε στον Ιμπραήμ στο Μανιάκι;", "Ο Παπαφλέσσας"],
+    ["Ποιο ήταν το αποτέλεσμα της μάχης στο Μανιάκι;", "Ο Παπαφλέσσας έχασε τη ζωή του"],
+    ["Πότε έγινε η μάχη στο Μανιάκι;", "Τέλη Μαΐου 1825"],
+  ]},
+  { num: 12, title: "Η δεύτερη πολιορκία του Μεσολογγίου – ο Διονύσιος Σολωμός", color: "var(--c12)", rows: [
+    ["Πότε ξεκίνησε η δεύτερη πολιορκία του Μεσολογγίου;", "Τον Απρίλιο του 1825"],
+    ["Ποιος ξεκίνησε αρχικά την πολιορκία;", "Ο Κιουταχής"],
+    ["Πότε έφτασε ο Ιμπραήμ στο Μεσολόγγι;", "Τον Δεκέμβριο του 1825"],
+    ["Πότε έγινε η Έξοδος του Μεσολογγίου;", "10 Απριλίου 1826"],
+    ["Τι συμβόλισε η Έξοδος;", "Μία από τις κορυφαίες στιγμές – βαθιά συγκίνηση παγκοσμίως"],
+  ]},
+  { num: 13, title: "Οι αγώνες του Καραϊσκάκη", color: "var(--c13)", rows: [
+    ["Τι επέτρεψε η πτώση του Μεσολογγίου;", "Την πολιορκία της Ακρόπολης από τον Κιουταχή"],
+    ["Ποιος ανέλαβε την αντιμετώπιση του Κιουταχή;", "Ο Γεώργιος Καραϊσκάκης"],
+    ["Πότε πέτυχε σημαντικές νίκες ο Καραϊσκάκης;", "Το φθινόπωρο του 1826"],
+    ["Πότε πέθανε ο Καραϊσκάκης;", "22-23 Απριλίου 1827"],
+    ["Τι συνέβη μετά τον θάνατό του;", "Τον Μάιο του 1827 παραδόθηκε η Ακρόπολη στους Τούρκους"],
+  ]},
+  { num: 14, title: "Ο Φιλελληνισμός", color: "var(--c14)", rows: [
+    ["Ποιοι ονομάζονται Φιλέλληνες;", "Ξένοι που εμπνεύστηκαν από την Επανάσταση και υποστήριξαν τους Έλληνες"],
+    ["Πώς υποστήριξαν οι Φιλέλληνες την Επανάσταση;", "Με διάφορους τρόπους (εθελοντές, χρήματα, πολιτική πίεση)"],
+    ["Πότε δημιουργήθηκε το Τάγμα Φιλελλήνων;", "Τον Μάιο 1822"],
+    ["Πότε πέθανε ο φιλέλληνας Λόρδος Μπάιρον;", "19 Απριλίου 1824"],
+  ]},
+  { num: 15, title: "Η παρέμβαση των Μεγάλων Δυνάμεων και η Ναυμαχία του Ναυαρίνου", color: "var(--c15)", rows: [
+    ["Πότε έγινε η Ναυμαχία του Ναυαρίνου;", "Τον Οκτώβριο του 1827"],
+    ["Ποιες χώρες συμμετείχαν κατά των Τούρκων;", "Αγγλία, Γαλλία και Ρωσία"],
+    ["Ποιο ήταν το αποτέλεσμα της ναυμαχίας;", "Νίκη των συμμαχικών – αποφασιστική συμβολή στην απελευθέρωση"],
+    ["Ποια ήταν αρχικά η στάση των Μεγάλων Δυνάμεων;", "Αρνητική (1821-1822 – καταδίκαζαν την Επανάσταση)"],
+    ["Πότε άλλαξε η στάση τους;", "1826-1827, προσπαθούν να λύσουν το Ελληνικό Ζήτημα"],
+  ]},
+  { num: 16, title: "Οι Εθνοσυνελεύσεις και η πολιτική οργάνωση του Αγώνα", color: "var(--c16)", rows: [
+    ["Τι ήταν οι Εθνοσυνελεύσεις;", "Συνελεύσεις που σχημάτισαν κεντρική διοίκηση και ψήφισαν Συντάγματα"],
+    ["Πού συνήλθε η Α΄ Εθνοσυνέλευση;", "Στην Επίδαυρο (Δεκ. 1821 – Ιαν. 1822)"],
+    ["Πού συνήλθε η Β΄ Εθνοσυνέλευση;", "Στο Άστρος (Μάρτιος–Απρίλιος 1823)"],
+    ["Πού συνήλθε η Γ΄ Εθνοσυνέλευση;", "Στην Τροιζήνα (Ιαν.–Μάιος 1827)"],
+    ["Τι ψήφισαν οι Εθνοσυνελεύσεις;", "Συντάγματα για την πολιτική οργάνωση του Αγώνα"],
+  ]},
+  { num: 17, title: "Ο Ιωάννης Καποδίστριας και το έργο του", color: "var(--c17)", rows: [
+    ["Από πού καταγόταν ο Καποδίστριας;", "Από αριστοκρατική οικογένεια της Κέρκυρας"],
+    ["Ποια θέση κατείχε πριν γίνει Κυβερνήτης;", "Υπουργός Εξωτερικών της Ρωσίας (έως το 1822)"],
+    ["Πότε εξελέγη Κυβερνήτης;", "Το 1827, από την Γ΄ Εθνοσυνέλευση της Τροιζήνας"],
+    ["Πότε δολοφονήθηκε;", "Το 1831"],
+  ]},
+  { num: 18, title: "Το τέλος της Επανάστασης και η ελληνική ανεξαρτησία", color: "var(--c18)", rows: [
+    ["Τι συνέβη μετά τη Ναυμαχία του Ναυαρίνου;", "Αυξήθηκαν οι διπλωματικές ενέργειες για την Ελλάδα"],
+    ["Τι υπογράφηκε τον Φεβρουάριο του 1830;", "Το Λονδίνο Πρωτόκολλο"],
+    ["Τι κατοχυρώθηκε με αυτό;", "Η ανεξαρτησία της Ελλάδας"],
+    ["Πότε τελείωσε η Μεγάλη Επανάσταση;", "Το 1830"],
+  ]},
+];
+
+const dates = [
+  ["1823", "Γενίκευση συγκρούσεων – θάνατος Μπότσαρη (Αύγ. 1823)"],
+  ["Χειμώνας 1824-25", "Αποβίβαση Ιμπραήμ στη Μεθώνη"],
+  ["Τέλη Μαΐου 1825", "Μάχη Μανιακίου – θάνατος Παπαφλέσσα"],
+  ["Απρίλιος 1825", "Έναρξη 2ης πολιορκίας Μεσολογγίου"],
+  ["10 Απρ. 1826", "Έξοδος του Μεσολογγίου"],
+  ["Φθινόπωρο 1826", "Νίκες Καραϊσκάκη"],
+  ["22-23 Απρ. 1827", "Θάνατος Καραϊσκάκη"],
+  ["Μάιος 1827", "Παράδοση Ακρόπολης στους Τούρκους"],
+  ["Οκτ. 1827", "Ναυμαχία Ναυαρίνου"],
+  ["1827", "Γ΄ Εθνοσυνέλευση Τροιζήνας – εκλογή Καποδίστρια"],
+  ["Φεβ. 1830", "Λονδίνο Πρωτόκολλο – ελληνική ανεξαρτησία"],
+  ["1831", "Δολοφονία Καποδίστρια"],
+];
+
+function buildChapters() {
+  const container = document.getElementById('chapters');
+  chapters.forEach(ch => {
+    const div = document.createElement('div');
+    div.className = 'chapter';
+    div.innerHTML = `
+      <div class="chapter-header" style="background:${ch.color}">
+        <span class="num">${ch.num}</span>
+        Κεφάλαιο ${ch.num}: ${ch.title}
+      </div>
+      <table>
+        <thead>
+          <tr><th>Ερώτηση</th><th>Απάντηση</th></tr>
+        </thead>
+        <tbody>
+          ${ch.rows.map(([q,a]) => `
+            <tr>
+              <td>${q}</td>
+              <td class="answer-cell" onclick="this.classList.toggle('revealed')">
+                <span class="answer-text">${a}</span>
+                <span class="tap-hint">👆 Πάτα για απάντηση</span>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+    container.appendChild(div);
+  });
+
+  // Dates
+  const datesDiv = document.createElement('div');
+  datesDiv.className = 'dates-section';
+  datesDiv.innerHTML = `
+    <div class="dates-header">📅 Σπουδαίες Ημερομηνίες για να θυμάσαι</div>
+    <table class="dates-table">
+      <thead><tr><th>Χρονολογία</th><th>Γεγονός</th></tr></thead>
+      <tbody>
+        ${dates.map(([d,e],i) => `
+          <tr>
+            <td style="background:${i%2===0?'#ECEFF1':'#F5F7F8'} !important">${d}</td>
+            <td class="answer-cell" onclick="this.classList.toggle('revealed')" style="background:${i%2===0?'#FAFEFA':'#F9FBF9'}">
+              <span class="answer-text">${e}</span>
+              <span class="tap-hint">👆 Πάτα για απάντηση</span>
+            </td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+  container.appendChild(datesDiv);
+}
+
+function revealAll() {
+  document.querySelectorAll('.answer-cell').forEach(c => c.classList.add('revealed'));
+}
+
+buildChapters();
+</script>
+
+<div id="chapters"></div>
+
+<footer>© myspiderwebsite</footer>
+
+</body>
+</html>

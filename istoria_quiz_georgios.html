@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ιστορία Κουίζ – Γεώργιος Α΄ & Τρικούπης</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #3a86ff;
+    --primary-dark: #2563eb;
+    --correct: #22c55e;
+    --wrong: #ef4444;
+    --hint: #f59e0b;
+    --bg: #f0f6ff;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --shadow: 0 4px 20px rgba(58,134,255,0.13);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 60px;
+    color: var(--text);
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: var(--primary-dark);
+    letter-spacing: 0.5px;
+  }
+
+  header p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-top: 4px;
+  }
+
+  .quiz-container {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .progress-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    min-width: 50px;
+  }
+
+  .progress-bar-bg {
+    flex: 1;
+    height: 10px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #60a5fa);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  /* Question card */
+  .card {
+    background: var(--card);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 28px 26px 24px;
+    margin-bottom: 20px;
+  }
+
+  .question-text {
+    font-size: 1.15rem;
+    font-weight: 800;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 22px;
+  }
+
+  /* Answer options */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+
+  .option-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 18px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: #f8fafc;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    text-align: left;
+    transition: border-color 0.2s, background 0.2s, transform 0.1s;
+    line-height: 1.4;
+  }
+
+  .option-btn:not(:disabled):hover {
+    border-color: var(--primary);
+    background: #eff6ff;
+    transform: translateX(3px);
+  }
+
+  .option-btn .letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--border);
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--muted);
+    transition: background 0.2s, color 0.2s;
+    flex-shrink: 0;
+  }
+
+  .option-btn.correct {
+    border-color: var(--correct);
+    background: #f0fdf4;
+  }
+  .option-btn.correct .letter {
+    background: var(--correct);
+    color: #fff;
+  }
+
+  .option-btn.wrong {
+    border-color: var(--wrong);
+    background: #fef2f2;
+  }
+  .option-btn.wrong .letter {
+    background: var(--wrong);
+    color: #fff;
+  }
+
+  .option-btn:disabled {
+    cursor: default;
+  }
+
+  /* Feedback */
+  .feedback {
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    display: none;
+    align-items: center;
+    gap: 8px;
+  }
+  .feedback.show { display: flex; }
+  .feedback.correct-fb { background: #dcfce7; color: #166534; }
+  .feedback.wrong-fb   { background: #fee2e2; color: #991b1b; }
+
+  /* Hint */
+  .hint-section {
+    margin-top: 16px;
+  }
+
+  .hint-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--hint);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+  }
+
+  .hint-toggle svg {
+    transition: transform 0.3s;
+  }
+  .hint-toggle.open svg { transform: rotate(180deg); }
+
+  .hint-box {
+    display: none;
+    margin-top: 10px;
+    padding: 11px 15px;
+    background: #fffbeb;
+    border-left: 4px solid var(--hint);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #78350f;
+    line-height: 1.5;
+  }
+  .hint-box.show { display: block; }
+
+  /* Navigation */
+  .nav {
+    display: flex;
+    gap: 12px;
+  }
+
+  .nav-btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    letter-spacing: 0.3px;
+  }
+  .nav-btn:active { transform: scale(0.97); }
+  .nav-btn:disabled { opacity: 0.4; cursor: default; }
+
+  .btn-prev {
+    background: #e2e8f0;
+    color: var(--text);
+  }
+  .btn-next {
+    background: var(--primary);
+    color: #fff;
+  }
+  .btn-next.finish-btn {
+    background: var(--correct);
+  }
+
+  /* Results screen */
+  .results {
+    display: none;
+    text-align: center;
+    background: var(--card);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    padding: 40px 30px;
+  }
+  .results.show { display: block; }
+
+  .results .trophy {
+    font-size: 4rem;
+    margin-bottom: 10px;
+  }
+
+  .results h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.9rem;
+    color: var(--primary-dark);
+    margin-bottom: 8px;
+  }
+
+  .score-display {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--primary);
+    margin: 14px 0;
+  }
+
+  .score-msg {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  .restart-btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 40px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .restart-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+  footer {
+    margin-top: 40px;
+    font-size: 0.78rem;
+    color: #a0aec0;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📖 Ιστορία Κουίζ</h1>
+  <p>Γεώργιος Α΄ &amp; Χαρίλαος Τρικούπης</p>
+</header>
+
+<div class="quiz-container">
+  <div id="quizArea">
+    <div class="progress-wrap">
+      <span class="progress-label" id="progressLabel">1 / 10</span>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill" style="width:10%"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="question-text" id="questionText"></div>
+      <div class="options" id="optionsArea"></div>
+      <div class="feedback" id="feedbackArea"></div>
+      <div class="hint-section" id="hintSection" style="display:none">
+        <button class="hint-toggle" id="hintToggle" onclick="toggleHint()">
+          💡 Υπόδειξη
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="hint-box" id="hintBox"></div>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button class="nav-btn btn-prev" id="btnPrev" onclick="goTo(currentQ - 1)" disabled>Προηγούμενη</button>
+      <button class="nav-btn btn-next" id="btnNext" onclick="handleNext()">Επόμενη</button>
+    </div>
+  </div>
+
+  <div class="results" id="resultsArea">
+    <div class="trophy">🏆</div>
+    <h2>Τέλος Κουίζ!</h2>
+    <div class="score-display" id="scoreDisplay"></div>
+    <p class="score-msg" id="scoreMsg"></p>
+    <button class="restart-btn" onclick="restart()">🔄 Ξανά από την αρχή</button>
+  </div>
+</div>
+
+<footer>© myspiderwebsite</footer>
+
+<script>
+const questions = [
+  {
+    q: "Ποιος επιλέχθηκε από τις Μεγάλες Δυνάμεις ως ο νέος βασιλιάς της Ελλάδας μετά την απομάκρυνση του Όθωνα;",
+    options: ["Ο Κωνσταντίνος Παλαιολόγος", "Ο Χαρίλαος Τρικούπης", "Ο Ιωάννης Καποδίστριας", "Ο Δανός πρίγκιπας Γεώργιος"],
+    correct: 3,
+    hint: "Ήταν πρίγκιπας από τη Σκανδιναβία και επελέγη το 1863."
+  },
+  {
+    q: "Ποια περιοχή παραχωρήθηκε στην Ελλάδα από τους Άγγλους το 1864 ως δώρο στον νέο βασιλιά;",
+    options: ["Τα Επτάνησα", "Η Θεσσαλία", "Η Κρήτη", "Τα Δωδεκάνησα"],
+    correct: 0,
+    hint: "Πρόκειται για νησιά στο Ιόνιο Πέλαγος."
+  },
+  {
+    q: "Τι χαρακτήρα είχε το νέο Σύνταγμα που ψηφίστηκε το 1864;",
+    options: [
+      "Επέβαλε την απόλυτη μοναρχία χωρίς περιορισμούς",
+      "Κατήργησε εντελώς το θεσμό της βασιλείας",
+      "Ήταν πιο δημοκρατικό και περιόριζε την εξουσία του βασιλιά",
+      "Έδινε το δικαίωμα ψήφου μόνο στους ευγενείς"
+    ],
+    correct: 2,
+    hint: "Το Σύνταγμα του 1864 ήταν σύγχρονο για την εποχή του και ενίσχυε τη λαϊκή εκπροσώπηση."
+  },
+  {
+    q: "Ποια ήταν η βασική στρατηγική του Χαριλάου Τρικούπη για τις αλύτρωτες περιοχές της Οθωμανικής Αυτοκρατορίας;",
+    options: [
+      "Η άμεση κήρυξη πολέμου για την απελευθέρωσή τους",
+      "Η ενθάρρυνση ένοπλων επαναστατικών κινημάτων",
+      "Η ίδρυση σχολείων και εκκλησιών για την τόνωση της ελληνικότητας",
+      "Η πλήρης αδιαφορία για τον ελληνισμό εκτός συνόρων"
+    ],
+    correct: 2,
+    hint: "Ο Τρικούπης προτιμούσε τον πολιτισμικό τρόπο διατήρησης της ελληνικής ταυτότητας."
+  },
+  {
+    q: "Ποιο από τα παρακάτω έργα υποδομής συνδέεται άμεσα με την πολιτική εκσυγχρονισμού του Τρικούπη;",
+    options: [
+      "Η δημιουργία του λιμανιού του Πειραιά στην αρχαιότητα",
+      "Η κατασκευή της Ακρόπολης",
+      "Η διάνοιξη της διώρυγας της Κορίνθου",
+      "Η οικοδόμηση του παλατιού του Όθωνα"
+    ],
+    correct: 2,
+    hint: "Πρόκειται για ένα μεγάλο τεχνικό έργο που συνδέει τον Κορινθιακό με τον Σαρωνικό κόλπο."
+  },
+  {
+    q: "Ποια περιοχή ενσωματώθηκε στο ελληνικό κράτος το 1881, συμβάλλοντας στην αύξηση της καλλιεργήσιμης γης;",
+    options: [
+      "Η Θεσσαλία και ο νομός Άρτας",
+      "Η Πελοπόννησος",
+      "Οι Κυκλάδες",
+      "Η Μακεδονία και η Θράκη"
+    ],
+    correct: 0,
+    hint: "Η ενσωμάτωση έγινε μετά από διπλωματικές πιέσεις χωρίς πόλεμο."
+  },
+  {
+    q: "Για ποιο λόγο η Ελλάδα αναγκάστηκε να δεχτεί τον Διεθνή Οικονομικό Έλεγχο μετά το 1893;",
+    options: [
+      "Για να οργανωθούν οι Ολυμπιακοί Αγώνες του 1896",
+      "Για να διασφαλιστεί η πληρωμή του υπέρογκου δημόσιου χρέους",
+      "Για να χρηματοδοτηθεί η εκστρατεία στη Μικρά Ασία",
+      "Για να αντικατασταθεί η δραχμή με ένα διεθνές νόμισμα"
+    ],
+    correct: 1,
+    hint: "Η χώρα αδυνατούσε να αποπληρώσει τα δάνειά της προς ξένες τράπεζες."
+  },
+  {
+    q: "Ποιο σημαντικό έργο στον τομέα της γεωργίας υλοποιήθηκε επί Τρικούπη στη Στερεά Ελλάδα;",
+    options: [
+      "Η αποξήρανση της λίμνης Κωπαΐδας",
+      "Η φύτευση ελαιώνων στην Αττική",
+      "Η δημιουργία τεχνητής λίμνης στον Μαραθώνα",
+      "Η κατασκευή του φράγματος του Αχελώου"
+    ],
+    correct: 0,
+    hint: "Μια μεγάλη λίμνη της Βοιωτίας μετατράπηκε σε γόνιμη γη."
+  },
+  {
+    q: "Τι συνέβη στην ελληνική οικονομία το 1893 λόγω του μεγάλου δανεισμού και της κακής συλλογής φόρων;",
+    options: [
+      "Η Ελλάδα δάνεισε χρήματα σε άλλες ευρωπαϊκές χώρες",
+      "Η χώρα απέκτησε το μεγαλύτερο πλεόνασμα στην ιστορία της",
+      "Ο Τρικούπης κήρυξε πτώχευση",
+      "Καταργήθηκαν όλοι οι φόροι για τους πολίτες"
+    ],
+    correct: 2,
+    hint: "Η χώρα αδυνατούσε να ανταποκριθεί στις οικονομικές της υποχρεώσεις."
+  },
+  {
+    q: "Ποια ήταν η διάρκεια της βασιλείας του Γεωργίου Α΄;",
+    options: [
+      "Μόλις 10 χρόνια",
+      "Λιγότερο από 5 χρόνια",
+      "Περίπου 50 χρόνια",
+      "100 χρόνια"
+    ],
+    correct: 2,
+    hint: "Βασίλεψε από το 1863 έως τη δολοφονία του το 1913."
+  }
+];
+
+let currentQ = 0;
+let answers = new Array(questions.length).fill(null);
+let score = 0;
+
+function renderQuestion(idx) {
+  const data = questions[idx];
+  document.getElementById('progressLabel').textContent = `${idx + 1} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = `${((idx + 1) / questions.length) * 100}%`;
+  document.getElementById('questionText').textContent = data.q;
+
+  const optArea = document.getElementById('optionsArea');
+  optArea.innerHTML = '';
+  const letters = ['Α', 'Β', 'C', 'D'];
+
+  data.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    optArea.appendChild(btn);
+  });
+
+  // Restore state if answered
+  const fb = document.getElementById('feedbackArea');
+  fb.className = 'feedback';
+  fb.textContent = '';
+
+  if (answers[idx] !== null) {
+    applyAnsweredState(idx, answers[idx]);
+  } else {
+    setOptionsEnabled(true);
+  }
+
+  // Hint
+  const hintSec = document.getElementById('hintSection');
+  const hintBox = document.getElementById('hintBox');
+  const hintToggle = document.getElementById('hintToggle');
+  if (data.hint) {
+    hintSec.style.display = '';
+    hintBox.textContent = data.hint;
+    hintBox.classList.remove('show');
+    hintToggle.classList.remove('open');
+  } else {
+    hintSec.style.display = 'none';
+  }
+
+  // Buttons
+  document.getElementById('btnPrev').disabled = idx === 0;
+  const btnNext = document.getElementById('btnNext');
+  if (idx === questions.length - 1) {
+    btnNext.textContent = 'Τέλος';
+    btnNext.classList.add('finish-btn');
+  } else {
+    btnNext.textContent = 'Επόμενη';
+    btnNext.classList.remove('finish-btn');
+  }
+}
+
+function selectAnswer(chosen) {
+  if (answers[currentQ] !== null) return;
+  answers[currentQ] = chosen;
+  const correct = questions[currentQ].correct;
+  if (chosen === correct) score++;
+  applyAnsweredState(currentQ, chosen);
+}
+
+function applyAnsweredState(idx, chosen) {
+  const correct = questions[idx].correct;
+  const btns = document.querySelectorAll('.option-btn');
+
+  btns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === correct) btn.classList.add('correct');
+    else if (i === chosen && chosen !== correct) btn.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedbackArea');
+  if (chosen === correct) {
+    fb.className = 'feedback correct-fb show';
+    fb.textContent = '✅ Σωστό!';
+  } else {
+    fb.className = 'feedback wrong-fb show';
+    fb.textContent = `❌ Λάθος! Η σωστή απάντηση είναι: ${questions[idx].options[correct]}`;
+  }
+}
+
+function setOptionsEnabled(enabled) {
+  document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = !enabled);
+}
+
+function toggleHint() {
+  const box = document.getElementById('hintBox');
+  const toggle = document.getElementById('hintToggle');
+  box.classList.toggle('show');
+  toggle.classList.toggle('open');
+}
+
+function goTo(idx) {
+  if (idx < 0 || idx >= questions.length) return;
+  currentQ = idx;
+  renderQuestion(currentQ);
+}
+
+function handleNext() {
+  if (currentQ < questions.length - 1) {
+    goTo(currentQ + 1);
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  document.getElementById('quizArea').style.display = 'none';
+  const res = document.getElementById('resultsArea');
+  res.classList.add('show');
+  document.getElementById('scoreDisplay').textContent = `${score} / ${questions.length}`;
+
+  let msg = '';
+  const pct = score / questions.length;
+  if (pct === 1) msg = '🎉 Τέλειο! Απάντησες σωστά σε όλες τις ερωτήσεις!';
+  else if (pct >= 0.8) msg = '👏 Μπράβο! Πολύ καλή δουλειά!';
+  else if (pct >= 0.6) msg = '😊 Καλή προσπάθεια! Μελέτησε λίγο ακόμα.';
+  else msg = '📚 Χρειάζεται περισσότερη μελέτη. Ξαναδές το κεφάλαιο!';
+
+  document.getElementById('scoreMsg').textContent = msg;
+}
+
+function restart() {
+  score = 0;
+  answers = new Array(questions.length).fill(null);
+  currentQ = 0;
+  document.getElementById('resultsArea').classList.remove('show');
+  document.getElementById('quizArea').style.display = '';
+  renderQuestion(0);
+}
+
+// Init
+renderQuestion(0);
+</script>
+
+</body>
+</html>
